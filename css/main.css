@@ -1,0 +1,152 @@
+html{
+    font-size: 14px;
+}
+
+hr{
+    margin: .25em;
+}
+
+
+.wrapper{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 70rem;
+}
+
+.left-wrapper{
+    display: inline-block;
+    width: 70%;
+}
+
+.area-content{
+    margin: .5rem 0 2rem 0;
+}
+
+.panel-weapon{
+    margin: 1em;
+}
+
+.img-wrapper{
+    display: inline-block;
+    position: relative;
+}
+
+.img-wrapper p{
+    font-size: 18px;
+    right: 5%;
+    bottom: 0%;
+    margin-bottom: 0;
+    position: absolute;
+}
+
+.panel-weapon dl{
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1em;
+    height: 100px;
+    position: relative;
+}
+
+.panel-weapon .progress-text{
+    display: inherit;
+}
+
+.panel-weapon dl img{
+    position: absolute;
+    bottom: 0;
+}
+
+.progress-text dt{
+    display: inline-block;
+}
+
+.panel-weapon .progress{
+    margin-bottom: .5em
+}
+
+/* 以上是本体部分 */
+
+.left-wrapper ul{
+    padding-left: 1rem;
+    list-style: none;
+    width: 100%;
+}
+
+/* 用于排版素材数据 */
+@media screen and (min-width:601px){
+.area-queue li:last-child{
+    margin-right: 0;
+    width: 32%;
+}
+}
+
+.area-queue li{
+    display: inline-block;
+    width: 27%;
+    margin-right: 5%;
+}
+
+.container-queue{
+    margin: 0 2% 0 2%;
+    border-radius: 5px;
+    display: inline-flex;
+    width: 45%;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-queue:hover{
+    background: #c3e2ffcc;
+}
+
+.panel-queue img{
+    margin-right: auto;
+}
+
+/* 以上是素材队列部分 */
+
+.right-wrapper{
+    float: right;
+    width: 30%;
+}
+
+.area-material{
+    margin: .5rem 0 2rem 0;
+}
+
+.container-list{
+    display: inline-block;
+}
+
+.container-list img{
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
+/* 小屏专用 */
+@media screen and (max-width:600px){
+    .left-wrapper{
+        width: 100%;
+    }
+
+    .right-wrapper{
+        float: none;
+        width: 100%;
+    }
+
+    .container-queue{
+        display: flex;
+        width: 95%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .area-queue li{
+        display: inherit;
+        width: 95%;
+    }
+
+    .area-cost li{
+        width: 95%;
+    }
+}
