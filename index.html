@@ -7,8 +7,10 @@
 <title>NT Weapon Grind Simulator</title>
 <link rel="stylesheet" href="css/bootstrap.min.css" charset="utf-8" />
 <link rel="stylesheet" href="css/main.css" charset="utf-8" />
-<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://unpkg.com/vue"></script>
+<!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script> -->
+<!--<script src="https://unpkg.com/vue"></script>-->
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/popper.min.js"></script>
 <script type="text/javascript" src="js/jquery-3.2.0.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/main.js" charset="utf-8"></script>
@@ -37,16 +39,16 @@
 <div class="area-content area-base">
 	<span class="h4 text-muted ml-2">Base Weapon</span>
 	<hr/>
-	<div class="panel-weapon">
+	<div class="panel-weapon" id="panel-weapon">
 		<div class="img-wrapper">
-		<img id="thumb-weapon" src="http://temp.im/100x100" />
-		<p>★14</p>
+		<img src="http://temp.im/100x100" />
+		<p> {{rule().name}} </p>
 		</div>
 		<dl>
-			<dt class="">Eternal Psycho Drive</dt>
-			<dt class="">Rarity: 14</dt>
-			<dt class="">Grind: +18</dt>
-            <dt><button type="button" class="btn btn-primary btn-sm" data-toggle="popover" title="Item properties editor">Edit Base Detail</button></dt>
+			<dt class="">{{name}}</dt>
+			<dt class="">Rarity: {{rule().name}}</dt>
+			<dt class="">Grind: {{grind}}</dt>
+            <dt><button type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base Detail</button></dt>
 		</dl>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">To next level</span>
@@ -57,10 +59,10 @@
 		</div>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">Total EXP</span>
-			<span class="text-muted mr-2 float-right">5000 / 6250</span>
+			<span class="text-muted mr-2 float-right">{{ baseExp }} / {{expTable()[36]}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
-			<div class="progress-bar bg-info" role="progressbar" style="width: 80%"></div>
+			<div class="progress-bar progress-bar-animated bg-info" role="progressbar" v-bind:style="{width: baseExp/expTable()[36]*100 + '%'}"></div>
 		</div>
 	</div>
 </div>
@@ -119,12 +121,12 @@
 		</div>
 	</div>
 </div>
-    <div class="modal-wrapper">
+<div class="modal-wrapper">
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                    <h5 class="modal-title">About</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -143,7 +145,71 @@
             </div>
         </div>
     </div>
-    </div>
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" >Edit Parameters</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="element-edit input-group">
+						<span class="input-group-addon">Weapon Name</span>
+						<input type="text" class="form-control" id="modal-input-name" v-model="name">
+					</div>
+					<div class="element-edit input-group">
+						<span class="input-group-addon">Description</span>
+						<input type="text" class="form-control" id="modal-input-desc" v-model="desc">
+					</div>
+					<div class="element-edit btn-group" data-toggle="buttons" id="modal-input-rarity">
+						<label class="btn btn-success">
+							<input type="radio" name="options" value="r123"> ★1-3
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" value="r456"> ★4-6
+						</label>
+						<label class="btn btn-danger">
+							<input type="radio" name="options" value="r789"> ★7-9
+						</label>
+						<label class="btn btn-warning">
+							<input type="radio" name="options" value="r10"> ★10
+						</label>
+						<label class="btn btn-warning">
+							<input type="radio" name="options" value="r11"> ★11
+						</label>
+						<label class="btn btn-warning">
+							<input type="radio" name="options" value="r12"> ★12
+						</label>
+						<label class="btn btn-info">
+							<input type="radio" name="options" value="r13"> ★13
+						</label>
+						<label class="btn btn-info">
+							<input type="radio" name="options" value="r14"> ★14
+						</label>
+					</div>
+					<div class="element-edit input-group">
+						<span class="input-group-addon">Grind Level</span>
+						<input type="text" class="form-control" id="modal-input-grind" v-model="grind">
+					</div>
+					<div class="element-edit input-group">
+						<span class="input-group-addon">Next Level</span>
+						<input type="text" class="form-control" id="modal-input-next" v-model="nextLv">
+					</div>
+					<div class="element-edit input-group">
+						<span class="input-group-addon">Base Exp</span>
+						<input type="text" class="form-control" id="modal-input-total" v-model="baseExp">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="btn-edit-save">Save changes</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 </div>
 </body>
 </html>

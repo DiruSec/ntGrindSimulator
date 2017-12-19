@@ -145,6 +145,9 @@ hr{
     margin-bottom: 0;
 }
 
+.element-edit {
+    margin-bottom: .5em;
+}
 /* 小屏专用 */
 @media screen and (max-width:600px){
     .left-wrapper{
@@ -170,5 +173,9 @@ hr{
 
     .area-cost li{
         width: 95%;
+    }
+
+    .element-edit.btn-group{
+        display: inherit;
     }
 }
