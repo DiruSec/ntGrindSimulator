@@ -1,3 +1,8 @@
+document.addEventListener('DOMContentLoaded', function() {
+    Calculator.initialization();
+}, false);
+
+// 主要处理函数
 var Calculator = {
 	data: {
 		expTable: {
@@ -21,6 +26,22 @@ var Calculator = {
 			"r14": {name: "★14"},
 		},
 	},
+
+    initialization: function(){
+        $('[data-toggle="popover"]').popover({
+            content: this.createPopover(),
+            html: true,
+            placement: "auto"
+        })
+    },
+
+    createPopover: function(){
+	    return "<ul class='popup-ul'>" +
+            "<li>Rarity: <input class='' type='number'/></li>" +
+            "<li>Base Exp: <input class='' type='number'/></li>" +
+            "<li>Grind Level: <input class='' type='number'/></li>" +
+            "</ul>"
+    },
 
 	calc: function() {
 		var table = rare_exp_table[$("#rare").val()];

@@ -18,14 +18,17 @@
 <nav class="navbar navbar-light bg-light">
 	<span class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
 	<ul class="nav justify-content-end">
+        <li class="nav-item">
+            <a class="nav-link" href="#"> Save </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
+        </li>
 		<li class="nav-item">
-			<a class="nav-link" href="#"> Help </a>
+			<a class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="#"> Save </a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#"> About </a>
+			<a class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
 		</li>
 	</ul>
 </nav>
@@ -43,7 +46,7 @@
 			<dt class="">Eternal Psycho Drive</dt>
 			<dt class="">Rarity: 14</dt>
 			<dt class="">Grind: +18</dt>
-			<img id="thumb-weapon" src="http://temp.im/150x25" />
+            <dt><button type="button" class="btn btn-primary btn-sm" data-toggle="popover" title="Item properties editor">Edit Base Detail</button></dt>
 		</dl>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">To next level</span>
@@ -116,6 +119,31 @@
 		</div>
 	</div>
 </div>
+    <div class="modal-wrapper">
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <dl>
+                        <dt>Simulator Version</dt><dd>0.1.0</dd>
+                    </dl>
+                    <dl>
+                        <dt>Calculator Version</dt><dd>Under development</dd>
+                    </dl>
+                    <dl>
+                        <dt>Developer</dt><dd>DiruSec</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
 </body>
 </html>

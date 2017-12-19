@@ -18,9 +18,12 @@ hr{
     width: 70%;
 }
 
+
 .area-content{
     margin: .5rem 0 2rem 0;
 }
+
+/* 武器本体部分 */
 
 .panel-weapon{
     margin: 1em;
@@ -51,7 +54,7 @@ hr{
     display: inherit;
 }
 
-.panel-weapon dl img{
+.panel-weapon dl button{
     position: absolute;
     bottom: 0;
 }
@@ -64,7 +67,7 @@ hr{
     margin-bottom: .5em
 }
 
-/* 以上是本体部分 */
+/* 强化素材队列部分 */
 
 .left-wrapper ul{
     padding-left: 1rem;
@@ -121,6 +124,25 @@ hr{
 .container-list img{
     margin-top: 1em;
     margin-right: 1em;
+}
+
+/* 弹出工具框部分 */
+.popup-ul{
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.modal-wrapper dl{
+    margin-bottom: 0;
+}
+
+.modal-wrapper dt{
+    display: inline-block;
+}
+
+.modal-wrapper dd{
+    float: right;
+    margin-bottom: 0;
 }
 
 /* 小屏专用 */
