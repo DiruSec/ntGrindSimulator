@@ -1,6 +1,8 @@
-html{
-    font-size: 14px;
+body{
+    /*font-size: 12px;*/
+    /*font-family: Meiryo, "Microsoft YaHei UI";*/
 }
+
 
 hr{
     margin: .25em;
@@ -32,13 +34,25 @@ hr{
 .img-wrapper{
     display: inline-block;
     position: relative;
+    background: #1c7430;
+    overflow: hidden;
+    /*mask-image: url(../img/icon.png)*/
+}
+
+.img-weapon-thumb{
+    background: url(../img/icon.png);
+    background-size: 100px;
+    width: 100px;
+    height: 100px;
 }
 
 .img-wrapper p{
+    background: #ffc107;
     font-size: 18px;
-    right: 5%;
-    bottom: 0%;
+    padding-right: 5%;
     margin-bottom: 0;
+    right: 0%;
+    bottom: 0%;
     position: absolute;
 }
 
@@ -148,6 +162,11 @@ hr{
 .element-edit {
     margin-bottom: .5em;
 }
+
+.element-edit.btn-group{
+    display: flex;
+}
+
 /* 小屏专用 */
 @media screen and (max-width:600px){
     .left-wrapper{

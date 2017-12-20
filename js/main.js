@@ -4,81 +4,116 @@ document.addEventListener('DOMContentLoaded', function() {
 // 主要处理函数
 var simulator = {
     initialization: function(){
-        this.createEdit();
+        this.createEditModel();
         this.createPanel();
     },
 
-    createEdit: function() {
+    createEditModel: function() {
         var editModal = new Vue({
             el: "#editModal",
             data: simulator.data.editorData
         });
-        $("body").delegate("#btn-edit-base", "click", function () {
-            for (index in simulator.data.sampleData.baseWeapon) {
-                simulator.data.editorData[index] = simulator.data.sampleData.baseWeapon[index]
-            }
-            $("#modal-input-rarity input:radio[value=" + simulator.data.editorData["rarity"] + "]").attr("checked", true)
-            $("#modal-input-rarity input:radio[value=" + simulator.data.editorData["rarity"] + "]").parent().addClass("active")
-        });
-        $("body").delegate("#btn-edit-save", "click", function () {
-            for (index in simulator.data.editorData) {
-                simulator.data.sampleData.baseWeapon[index] = simulator.data.editorData[index]
-                simulator.data.sampleData.baseWeapon["rarity"] = $("#modal-input-rarity input:radio:checked").val()
-            }
-        });
+        $("body").on("click", "#btn-edit-base", this.clickEditButton);
+        $("body").on("click", "#btn-edit-save", this.clickSaveButton);
+        $("#modal-input-total").on("change", this.handleBaseChange);
+        $("#modal-input-rarity input[type='radio']").on("change", this.handleRarityChange);
+        $("#modal-input-grind").on("change", this.handleGrindChange);
+        $("#modal-input-next").on("change", this.handleNextChange);
     },
 
     createPanel: function(){
         var panel = new Vue({
             el: '#panel-weapon',
             data: function() {
-                object = simulator.data.sampleData.baseWeapon;
+                object = simulator.data.baseWeapon;
                 return object
             }
         })
     },
 
-	calc: function() {
-		var table = rare_exp_table[$("#rare").val()];
-		var lv = parseInt($("#base_level").val())
-		var baseexp = table[lv];
-		var nextexp = table[lv + 1] - table[lv] - parseInt($("#base_next").val());
-		var total = baseexp + nextexp;
-		console.log("BASE EXP:" + total)
-		expcalc((total + material()))
-	},
-	material: function() {
-		var table = rare_exp_table[$("#m_rare").val()];
-		var lv = parseInt($("#m_base_level").val())
-		var baseexp = table[lv];
-		var nextexp = table[lv + 1] - table[lv] - parseInt($("#m_base_next").val());
-		console.log("MATERIAL EXP:" + (baseexp + nextexp))
-		return(baseexp + nextexp)
-	},
-	expcalc: function(exp) {
-		console.log("Total EXP:" + exp)
-		var base_exp = exp;
-		var exp_table = rare_exp_table[$("#rare").val()];
-		var limit_exp = 0,
-			level = 0;
+    createThumbPic: function(){
+        var html = '<div class="img-wrapper">' +
+            '<img src="http://temp.im/100x100" />' +
+            '<p>  </p>' +
+            '</div>';
+        return html;
+    },
 
-		if(exp < 0 || exp > exp_table[35]) {
-			console.log("Invaild input.")
-			return;
-		}
-		for(level = 0; level < exp_table.length; level++) {
-			limit_exp = exp_table[level];
-			if(base_exp < limit_exp) {
-				console.log("Grind Level +" + (level - 1));
-				console.log("Next EXP:" + (limit_exp - base_exp));
-				break;
-			} else if(base_exp == limit_exp) {
-				console.log("Grind Level +" + level);
-				console.log("Next EXP:" + (exp_table[(level + 1)] - base_exp));
-				break;
-			}
-		}
-	}
+    clickEditButton: function () {
+        for (index in simulator.data.baseWeapon) {
+            simulator.data.editorData[index] = simulator.data.baseWeapon[index]
+        }
+        $("#modal-input-rarity label").removeClass("active");
+        $("#modal-input-rarity input:radio[value=" + simulator.data.editorData["rarity"] + "]").attr("checked", true)
+        $("#modal-input-rarity input:radio[value=" + simulator.data.editorData["rarity"] + "]").parent().addClass("active")
+    },
+
+    clickSaveButton: function () {
+        for (index in simulator.data.editorData) {
+            simulator.data.baseWeapon[index] = simulator.data.editorData[index]
+        }
+    },
+
+    handleGrindChange: function(){
+        var data = simulator.data.editorData;
+        if (data.grind < 0){
+            data.grind = 0
+        } else if (data.grind > 35){
+            data.grind = 35
+        }
+        data.baseExp = data.expTable()[data.grind]
+        simulator.handleBaseChange()
+    },
+
+    handleNextChange: function(){
+        var data = simulator.data.editorData;
+        if (data.nextLv < 0){
+            data.baseExp = data.expTable()[data.grind+1];
+            simulator.handleBaseChange()
+        } else if (data.nextLv > (data.expTable()[data.grind+1] - data.expTable()[data.grind])){
+            data.baseExp = data.expTable()[data.grind] - 1;
+            simulator.handleBaseChange()
+        } else{
+            data.baseExp = data.expTable()[data.grind+1] - data.nextLv;
+            simulator.handleBaseChange()
+        }
+    },
+
+    handleRarityChange: function(){
+        var data = simulator.data.editorData;
+        data.rarity = $("#modal-input-rarity input:radio:checked").val()
+        simulator.handleBaseChange()
+    },
+
+    handleBaseChange: function(){
+        var data = simulator.data.editorData;
+        if (data.baseExp < 0){
+            data.baseExp = 0;
+            data.grind = 0;
+            data.nextLv = data.expTable()[1];
+            return false;
+        } else if (data.baseExp >= data.expTable()[35]){
+            data.baseExp = data.expTable()[35];
+            data.grind = 35;
+            data.nextLv = 0;
+            return false;
+        }
+
+        for (index in data.expTable()){
+            index = parseInt(index);
+            if (data.baseExp > data.expTable()[index]){
+                data.grind = index;
+                data.nextLv = data.expTable()[index+1] - data.baseExp
+            } else if (data.baseExp == data.expTable()[index]){
+                data.grind =  index==35?35:index;
+                data.nextLv = data.expTable()[index+1] - data.baseExp
+            }
+        }
+    },
+
+    appendMaterial: function(object){
+
+    }
 };
 
 BlankData = function(){
@@ -89,7 +124,7 @@ BlankData = function(){
     this.grind = "";
     this.baseExp = "";
     this.nextLv = "";
-}
+};
 
 simulator.data = {
     expTable: {
@@ -118,40 +153,36 @@ simulator.data = {
             return this[string]
         }
     },
-    returnThis: function(object){
 
-    },
-
-    // editorData: new simulator.data.createBlankData(),
     editorData: new BlankData(),
 
-    sampleData:{
-        baseWeapon: {
+    baseWeapon: {
+        name: "Eternal Psycho Drive",
+        desc: "just a test.",
+        rarity: "r14",
+        grind: 0,
+        baseExp: 0,
+        nextLv: 176,
+        materialExp: 0,
+        totalExp: function(){ return (parseInt(this.baseExp) + parseInt(this.materialExp))},
+        rule: function(){ return simulator.data.weaponRarity.getData(this.rarity)},
+        expTable: function(){ return simulator.data.expTable.getData(this.rarity)}
+    },
+
+    materialList: {
+        "EternalPsychoDrive" : {
             name: "Eternal Psycho Drive",
             desc: "just a test.",
             rarity: "r14",
             grind: 0,
-            baseExp: 1000,
-            nextLv: 175,
-            totalExp: 0,
-            rule: function(){ return simulator.data.weaponRarity.getData(this.rarity)},
-            expTable: function(){ return simulator.data.expTable.getData(this.rarity)}
+            totalExp: 0
         },
-        materialList: {
-            "EternalPsychoDrive" : {
-                name: "Eternal Psycho Drive",
-                desc: "just a test.",
-                rarity: "r14",
-                grind: 0,
-                totalExp: 0
-            },
-            "Kazaminotachi" : {
-                name: "Kazami no tachi",
-                desc: "just a test.",
-                rarity: "r14",
-                grind: 0,
-                totalExp: 0
-            }
+        "Kazaminotachi" : {
+            name: "Kazami no tachi",
+            desc: "just a test.",
+            rarity: "r14",
+            grind: 0,
+            totalExp: 0
         }
     }
-}
+};

@@ -7,10 +7,10 @@
 <title>NT Weapon Grind Simulator</title>
 <link rel="stylesheet" href="css/bootstrap.min.css" charset="utf-8" />
 <link rel="stylesheet" href="css/main.css" charset="utf-8" />
-<!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script> -->
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
 <!--<script src="https://unpkg.com/vue"></script>-->
 <script type="text/javascript" src="js/vue.js"></script>
-<script type="text/javascript" src="js/popper.min.js"></script>
+<!--<script type="text/javascript" src="js/popper.min.js"></script>-->
 <script type="text/javascript" src="js/jquery-3.2.0.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/main.js" charset="utf-8"></script>
@@ -41,8 +41,9 @@
 	<hr/>
 	<div class="panel-weapon" id="panel-weapon">
 		<div class="img-wrapper">
-		<img src="http://temp.im/100x100" />
-		<p> {{rule().name}} </p>
+            <div class="img-weapon-thumb">
+                <p> {{rule().name}} </p>
+            </div>
 		</div>
 		<dl>
 			<dt class="">{{name}}</dt>
@@ -52,17 +53,17 @@
 		</dl>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">To next level</span>
-			<span class="text-muted mr-2 float-right">200 / 500</span>
+			<span class="text-muted mr-2 float-right">{{nextLv}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
-			<div class="progress-bar bg-success" role="progressbar" style="width: 40%"></div>
+			<div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: (expTable()[grind+1]-nextLv)/expTable()[grind+1]*100 + '%'}"></div>
 		</div>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">Total EXP</span>
-			<span class="text-muted mr-2 float-right">{{ baseExp }} / {{expTable()[36]}}</span>
+			<span class="text-muted mr-2 float-right">{{ totalExp() }} / {{expTable()[35]}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
-			<div class="progress-bar progress-bar-animated bg-info" role="progressbar" v-bind:style="{width: baseExp/expTable()[36]*100 + '%'}"></div>
+			<div class="progress-bar progress-bar-animated bg-info" role="progressbar" v-bind:style="{width: totalExp()/expTable()[35]*100 + '%'}"></div>
 		</div>
 	</div>
 </div>
@@ -191,15 +192,15 @@
 					</div>
 					<div class="element-edit input-group">
 						<span class="input-group-addon">Grind Level</span>
-						<input type="text" class="form-control" id="modal-input-grind" v-model="grind">
+						<input type="number" class="form-control" id="modal-input-grind" v-model="grind">
 					</div>
 					<div class="element-edit input-group">
 						<span class="input-group-addon">Next Level</span>
-						<input type="text" class="form-control" id="modal-input-next" v-model="nextLv">
+						<input type="number" class="form-control" id="modal-input-next" v-model="nextLv">
 					</div>
 					<div class="element-edit input-group">
 						<span class="input-group-addon">Base Exp</span>
-						<input type="text" class="form-control" id="modal-input-total" v-model="baseExp">
+						<input type="number" class="form-control" id="modal-input-total" v-model="baseExp">
 					</div>
 				</div>
 				<div class="modal-footer">
