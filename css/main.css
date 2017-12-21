@@ -1,6 +1,7 @@
 body{
     /*font-size: 12px;*/
     /*font-family: Meiryo, "Microsoft YaHei UI";*/
+    user-select: none;
 }
 
 
@@ -51,7 +52,7 @@ hr{
     font-size: 18px;
     padding-right: 5%;
     margin-bottom: 0;
-    right: 0%;
+    left: 0%;
     bottom: 0%;
     position: absolute;
 }
@@ -81,6 +82,50 @@ hr{
     margin-bottom: .5em
 }
 
+/* 共通部分：武器图标 */
+.img-wrapper-small{
+    display: inline-block;
+    position: relative;
+    background: #0069d9;
+    overflow: hidden;
+    margin-right: 0.5em;
+    /*mask-image: url(../img/icon.png)*/
+}
+
+.img-weapon-thumb-small{
+    background: url(../img/icon.png);
+    background-size: 60px;
+    width: 60px;
+    height: 60px;
+}
+.img-wrapper-small span{
+    display: none;
+}
+
+.img-weapon-thumb-small:hover>.oi-circle-x{
+    display: inherit;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.img-weapon-thumb-small:hover>.oi-cog{
+    display: inherit;
+    position: absolute;
+    right: 0;
+    top: 75%;
+}
+
+.img-wrapper-small p{
+    background: #ffc107;
+    font-size: 14px;
+    padding-right: 5%;
+    margin-bottom: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+}
+
 /* 强化素材队列部分 */
 
 .left-wrapper ul{
@@ -89,6 +134,9 @@ hr{
     width: 100%;
 }
 
+.area-queue{
+    margin-bottom: 1rem;
+}
 /* 用于排版素材数据 */
 @media screen and (min-width:601px){
 .area-queue li:last-child{
@@ -107,20 +155,29 @@ hr{
     margin: 0 2% 0 2%;
     border-radius: 5px;
     display: inline-flex;
-    width: 45%;
+    width: auto;
     align-items: center;
     justify-content: center;
+    padding: .5rem .5rem .5rem 1rem;
+    position: relative;
 }
 
 .container-queue:hover{
     background: #c3e2ffcc;
 }
 
-.panel-queue img{
-    margin-right: auto;
+.container-queue span {
+    display: none;
 }
 
-/* 以上是素材队列部分 */
+.container-queue:hover>span{
+    display: inherit;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+/* 素材列表部分 */
 
 .right-wrapper{
     float: right;

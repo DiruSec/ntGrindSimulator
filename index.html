@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="">
 <title>NT Weapon Grind Simulator</title>
-<link rel="stylesheet" href="css/bootstrap.min.css" charset="utf-8" />
+<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
 <link rel="stylesheet" href="css/main.css" charset="utf-8" />
+<link rel="stylesheet" href="css/iconic/open-iconic-bootstrap.css">
 <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
 <!--<script src="https://unpkg.com/vue"></script>-->
-<script type="text/javascript" src="js/vue.js"></script>
-<!--<script type="text/javascript" src="js/popper.min.js"></script>-->
-<script type="text/javascript" src="js/jquery-3.2.0.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/vue/vue.js"></script>
+<!--<script type="text/javascript" src="js/bootstrap/popper.min.js"></script>-->
+<script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/sortable/Sortable.min.js"></script>
+<script type="text/javascript" src="js/sortable/vuedraggable.min.js"></script>
 <script type="text/javascript" src="js/main.js" charset="utf-8"></script>
 </head>
 <body>
@@ -46,9 +49,9 @@
             </div>
 		</div>
 		<dl>
-			<dt class="">{{name}}</dt>
-			<dt class="">Rarity: {{rule().name}}</dt>
-			<dt class="">Grind: {{grind}}</dt>
+			<dt class="">{{name}}　+{{grind}}</dt>
+			<dt class="">Base EXP: {{baseExp}}</dt>
+			<!--<dt class="">Grind: {{grind}}</dt>-->
             <dt><button type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base Detail</button></dt>
 		</dl>
 		<div class="progress-text clearfix">
@@ -56,7 +59,7 @@
 			<span class="text-muted mr-2 float-right">{{nextLv}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
-			<div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: (expTable()[grind+1]-nextLv)/expTable()[grind+1]*100 + '%'}"></div>
+			<div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: 100-(nextLv/(expTable()[grind+1]-expTable()[grind])*100) + '%'}"></div>
 		</div>
 		<div class="progress-text clearfix">
 			<span class="h5 ml-2">Total EXP</span>
@@ -72,24 +75,25 @@
 	<span class="h4 text-muted ml-2">Material Queue</span>
 	<hr/>
 	<ul class="clearfix">
-		<li>Material EXP: <span class="float-right">6500</span></li>
-		<li>Material Count: <span class="float-right">8</span></li>
-		<li>Grind Count: <span class="float-right">2</span></li>
+		<li>Material EXP: <span class="float-right">{{queue.queueExp()}}</span></li>
+		<li>Material Count: <span class="float-right">{{queue.queueCount()}}</span></li>
+		<li>Grind Count: <span class="float-right">{{queue.queueGrind()}}</span></li>
 	</ul>
-	<div class="panel-queue">
-		<div class="container-fluid container-queue" style="height: 8rem">
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-		</div>
-		<div class="container-fluid container-queue" style="height: 8rem">
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
+	<div class="panel-queue" id="panel-material-list">
+		<div class="container-fluid container-queue" v-for="items,group in groups">
+            <span class="oi oi-circle-x" @click="delgrp(group)"></span>
+            <div class="img-wrapper-small" v-for="item,index in items">
+                <div class="img-weapon-thumb-small">
+                    <p> {{item.rule().name}}</p>
+                    <span class="oi oi-circle-x" @click="del(index,group)"></span>
+                    <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material" v-bind:data-group="group" v-bind:data-index="index"></span>
+                </div>
+            </div>
 		</div>
 	</div>
+    <ul class="clearfix">
+        <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
+    </ul>
 </div>
 	<div class="area-content area-cost">
 		<span class="h4 text-muted ml-2">Item Cost</span>
@@ -110,15 +114,19 @@
 	<div class="area-content area-material">
 	<span class="h4 text-muted ml-2">Material List</span>
 	<hr/>
-	<div class="container-fluid container-list" style="width: 100%">
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
-			<img src="http://temp.im/60x80" />
+    <ul class="clearfix">
+        <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material-list" data-toggle="modal" data-target="#editModal">Add Material</button>
+    </ul>
+	<div class="container-fluid container-list" id="container-list" style="width: 100%">
+        <draggable :list="items">
+        <div class="img-wrapper-small" v-for="item,index in items">
+            <div class="img-weapon-thumb-small">
+                <p> {{item.rule().name}} </p>
+                <span class="oi oi-circle-x" @click="del(index)"></span>
+                <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material-list" v-bind:data-index="index"></span>
+            </div>
+        </div>
+        </draggable>
 		</div>
 	</div>
 </div>
