@@ -289,9 +289,9 @@ var simulator = {
     handleAddDragItem: function() {
         var self = simulator.data;
         if (self.dragData.length > 0){
-            console.log(self.dragData);
-            self.dragData.pop()
+            self.materialQueue.push([self.dragData.pop()])
         }
+        simulator.handleBaseUpdate("baseWeapon")
     }
 };
 
