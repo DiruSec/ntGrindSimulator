@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 <meta name="description" content="">
 <title>NT Weapon Grind Simulator</title>
 <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
@@ -80,8 +80,10 @@
 		<li>Grind Count: <span class="float-right">{{queue.queueGrind()}}</span></li>
 	</ul>
 	<div class="panel-queue" id="panel-material-list">
+		<draggable :list="groups" :options="{animation: 150}">
 		<div class="container-fluid container-queue" v-for="items,group in groups">
             <span class="oi oi-circle-x" @click="delgrp(group)"></span>
+			<draggable :list="items" :options="options" :move="checkLength" @end="handleUpdate">
             <div class="img-wrapper-small" v-for="item,index in items">
                 <div class="img-weapon-thumb-small">
                     <p> {{item.rule().name}}</p>
@@ -89,8 +91,11 @@
                     <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material" v-bind:data-group="group" v-bind:data-index="index"></span>
                 </div>
             </div>
+			</draggable>
 		</div>
+		</draggable>
 	</div>
+    <div class="add-material-space"><p> Drag here to add material. </p></div>
     <ul class="clearfix">
         <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
     </ul>
@@ -118,7 +123,7 @@
         <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material-list" data-toggle="modal" data-target="#editModal">Add Material</button>
     </ul>
 	<div class="container-fluid container-list" id="container-list" style="width: 100%">
-        <draggable :list="items">
+        <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options">
         <div class="img-wrapper-small" v-for="item,index in items">
             <div class="img-weapon-thumb-small">
                 <p> {{item.rule().name}} </p>

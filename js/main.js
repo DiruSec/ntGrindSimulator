@@ -45,8 +45,9 @@ var simulator = {
             el: '.area-queue',
             data: function(){
                 return {groups: simulator.data.materialQueue,
-                        queue: simulator.data.queueInfo}
-            },
+                        queue: simulator.data.queueInfo,
+                        options: {animation: 150, group:'material'}}
+                },
             methods: {
                 del: function (index,grp) {
                     this.groups[grp].splice(index, 1);
@@ -58,7 +59,15 @@ var simulator = {
                 delgrp: function(grp){
                     this.groups.splice(grp, 1);
                     simulator.handleBaseUpdate("baseWeapon")
-                }
+                },
+                checkLength: function(evt){
+                    if(evt.to !== evt.from && evt.relatedContext.list.length >= 5){
+                        return false;
+                    }
+                },
+                handleUpdate: function(){
+                    simulator.handleBaseUpdate("baseWeapon")
+                },
             }
         })
     },
@@ -67,11 +76,24 @@ var simulator = {
         var list = new Vue({
             el: '.container-list',
             data: function(){
-                return {items: simulator.data.materialList}
+                return {items: simulator.data.materialList,
+                        options: {animation: 150, group:{name: 'material', pull:'clone', put:false}}}
             },
             methods: {
                 del: function (index) {
                     this.items.splice(index, 1);
+                },
+                dragStart: function(){
+                    $(".add-material-space").show()
+                },
+                dragFinish: function(){
+                    simulator.handleBaseUpdate("baseWeapon")
+                    $(".add-material-space").hide()
+                },
+                checkLength: function(evt){
+                    if(evt.to !== evt.from && evt.relatedContext.list.length >= 5){
+                        return false;
+                    }
                 }
             }
         })
@@ -407,7 +429,28 @@ simulator.data = {
                 rarity: "r14",
                 grind: 0,
                 baseExp: 30
-            }
+            },
+            {
+                name: "Kazami no tachi",
+                desc: "just a test.",
+                rarity: "r14",
+                grind: 0,
+                baseExp: 30
+            },
+            {
+                name: "Kazami no tachi",
+                desc: "just a test.",
+                rarity: "r14",
+                grind: 0,
+                baseExp: 30
+            },
+            // {
+            //     name: "Kazami no tachi",
+            //     desc: "just a test.",
+            //     rarity: "r14",
+            //     grind: 0,
+            //     baseExp: 30
+            // }
         ]
     ],
 

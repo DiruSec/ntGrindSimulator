@@ -152,7 +152,7 @@ hr{
 }
 
 .container-queue{
-    margin: 0 2% 0 2%;
+    margin-right: 1rem;
     border-radius: 5px;
     display: inline-flex;
     width: auto;
@@ -175,6 +175,17 @@ hr{
     position: absolute;
     top: 0%;
     left: 0%;
+}
+
+.add-material-space{
+    margin: 0 auto;
+    margin-bottom: .5em;
+    width: 90%;
+    /*background: #1c7430;*/
+    border: #0069d9 .1em;
+    border-radius: 5px;
+    display: none;
+    border-style: dashed;
 }
 
 /* 素材列表部分 */
@@ -236,6 +247,7 @@ hr{
     }
 
     .container-queue{
+        margin: 0;
         display: flex;
         width: 95%;
         align-items: center;
