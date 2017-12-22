@@ -173,19 +173,39 @@ hr{
 .container-queue:hover>span{
     display: inherit;
     position: absolute;
-    top: 0%;
-    left: 0%;
+    top: 0;
+    left: 0;
 }
 
-.add-material-space{
-    margin: 0 auto;
-    margin-bottom: .5em;
+.panel-queue{
+    position: relative;
+}
+
+#add-material-space{
+    /*margin: 0 auto;*/
+    /*margin-bottom: .5em;*/
     width: 90%;
-    /*background: #1c7430;*/
+    background: #ffffffe0;
     border: #0069d9 .1em;
     border-radius: 5px;
     display: none;
-    border-style: dashed;
+    position: absolute;
+    left: 5%;
+    bottom: -3rem;
+    border-style: solid;
+    height: 3rem;
+    min-height: 3rem;
+}
+#add-material-space > * {
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px dashed #060;
+    position: absolute;
+    line-height: 1em;
+    font-size: 10px;
+    text-align: center;
 }
 
 /* 素材列表部分 */

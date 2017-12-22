@@ -9,7 +9,6 @@ var simulator = {
         this.addMaterialProperty();
         this.createMaterialQueue();
         this.createMaterialList();
-        this.createDraggableItem();
         this.handleBaseUpdate("baseWeapon")
     },
 
@@ -46,7 +45,8 @@ var simulator = {
             data: function(){
                 return {groups: simulator.data.materialQueue,
                         queue: simulator.data.queueInfo,
-                        options: {animation: 150, group:'material'}}
+                        options: {animation: 150, group:'material'},
+                        draglist: simulator.data.dragData}
                 },
             methods: {
                 del: function (index,grp) {
@@ -67,7 +67,7 @@ var simulator = {
                 },
                 handleUpdate: function(){
                     simulator.handleBaseUpdate("baseWeapon")
-                },
+                }
             }
         })
     },
@@ -84,28 +84,20 @@ var simulator = {
                     this.items.splice(index, 1);
                 },
                 dragStart: function(){
-                    $(".add-material-space").show()
+                    $("#add-material-space").show()
                 },
                 dragFinish: function(){
-                    simulator.handleBaseUpdate("baseWeapon")
-                    $(".add-material-space").hide()
+                    simulator.handleBaseUpdate("baseWeapon");
+                    simulator.handleAddDragItem();
+                    $("#add-material-space").hide()
                 },
                 checkLength: function(evt){
-                    if(evt.to !== evt.from && evt.relatedContext.list.length >= 5){
+                    if(evt.to.parentElement.id !== "add-material-space" && evt.to !== evt.from && evt.relatedContext.list.length >= 5){
                         return false;
                     }
                 }
             }
         })
-    },
-
-    createDraggableItem: function(){
-        // var el = document.getElementById('container-list');
-        // var sortable = new Sortable(el, {
-        //     sort: true,
-        //     delay: 0,
-        //     animation: 150,
-        // });
     },
 
     clickEditButton: function () {
@@ -294,6 +286,13 @@ var simulator = {
         }
     },
 
+    handleAddDragItem: function() {
+        var self = simulator.data;
+        if (self.dragData.length > 0){
+            console.log(self.dragData);
+            self.dragData.pop()
+        }
+    }
 };
 
 BlankData = function(){
@@ -342,6 +341,7 @@ simulator.data = {
         "editType": ""
     },
     addData: new BlankData(),
+    dragData: [],
 
     baseWeapon: {
         name: "(´・ω・｀)",

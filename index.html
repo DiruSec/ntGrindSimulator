@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
 <link rel="stylesheet" href="css/main.css" charset="utf-8" />
 <link rel="stylesheet" href="css/iconic/open-iconic-bootstrap.css">
-<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>-->
 <!--<script src="https://unpkg.com/vue"></script>-->
 <script type="text/javascript" src="js/vue/vue.js"></script>
-<!--<script type="text/javascript" src="js/bootstrap/popper.min.js"></script>-->
+<script type="text/javascript" src="js/bootstrap/popper.min.js"></script>
 <script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
 <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/sortable/Sortable.min.js"></script>
@@ -94,8 +94,11 @@
 			</draggable>
 		</div>
 		</draggable>
+        <div id="add-material-space">
+            <draggable :list="draglist" :options="{group: 'material'}"></draggable>
+        </div>
+
 	</div>
-    <div class="add-material-space"><p> Drag here to add material. </p></div>
     <ul class="clearfix">
         <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
     </ul>
