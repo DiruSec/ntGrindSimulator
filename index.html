@@ -83,13 +83,14 @@
 		<draggable :list="groups" :options="{animation: 150}">
 		<div class="container-fluid container-queue" v-for="items,group in groups">
             <span class="oi oi-circle-x" @click="delgrp(group)"></span>
-			<draggable :list="items" :options="options" :move="checkLength" @end="handleUpdate">
+			<draggable :list="items" @start="dragStart" @end="dragFinish" :options="options" :move="checkLength">
             <div class="img-wrapper-small" v-for="item,index in items">
                 <div class="img-weapon-thumb-small">
-                    <p> {{item.rule().name}}</p>
+                    <p>{{item.rule().name}}/+{{item.grind}}</p>
                     <span class="oi oi-circle-x" @click="del(index,group)"></span>
                     <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material" v-bind:data-group="group" v-bind:data-index="index"></span>
                 </div>
+				<p class="weapon-thumb-name">{{ item.name }}</p>
             </div>
 			</draggable>
 		</div>
@@ -133,6 +134,7 @@
                 <span class="oi oi-circle-x" @click="del(index)"></span>
                 <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material-list" v-bind:data-index="index"></span>
             </div>
+			<p class="weapon-thumb-name">{{ item.name }}</p>
         </div>
         </draggable>
 		</div>

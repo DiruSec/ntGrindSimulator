@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // 主要处理函数
 var simulator = {
     initialization: function(){
+        this.addMaterialProperty();
         this.createEditModel();
         this.createPanel();
-        this.addMaterialProperty();
         this.createMaterialQueue();
         this.createMaterialList();
         this.handleBaseUpdate("baseWeapon")
@@ -60,14 +60,20 @@ var simulator = {
                     this.groups.splice(grp, 1);
                     simulator.handleBaseUpdate("baseWeapon")
                 },
+                dragStart: function(){
+                    $("#add-material-space").show()
+                },
+                dragFinish: function(){
+                    simulator.handleBaseUpdate("baseWeapon");
+                    simulator.handleMaterialMoved();
+                    simulator.handleAddDragItem();
+                    $("#add-material-space").hide()
+                },
                 checkLength: function(evt){
                     if(evt.to !== evt.from && evt.relatedContext.list.length >= 5){
                         return false;
                     }
                 },
-                handleUpdate: function(){
-                    simulator.handleBaseUpdate("baseWeapon")
-                }
             }
         })
     },
@@ -169,7 +175,7 @@ var simulator = {
     },
 
     addMaterialProperty: function(){
-        var self = simulator.data
+        var self = simulator.data;
         for (group in self.materialQueue){
             for (index in self.materialQueue[group]){
                 self.materialQueue[group][index]["rule"]  = function(){ return simulator.data.weaponRarity.getData(this.rarity)};
@@ -223,7 +229,7 @@ var simulator = {
         } else if (data.grind > 35){
             data.grind = 35
         }
-        data.baseExp = data.expTable()[data.grind]
+        data.baseExp = data.expTable()[data.grind];
         simulator.handleBaseChange()
     },
 
@@ -275,13 +281,14 @@ var simulator = {
         var self = simulator.data[object];
         var totalExp = self.totalExp();
         for (index in self.expTable()){
-            index = parseInt(index)
+            index = parseInt(index);
             if (totalExp > self.expTable()[index]) {
                 self.grind = index;
                 self.nextLv = self.expTable()[index + 1] - totalExp
             } else if (totalExp == self.expTable()[index]) {
-                self.grind = index == 35 ? 35 : index;
-                self.nextLv = self.expTable()[index + 1] - totalExp
+                self.grind = index>=35?35:index;
+                self.nextLv = self.expTable()[index + 1] - totalExp;
+                break;
             }
         }
     },
@@ -292,6 +299,15 @@ var simulator = {
             self.materialQueue.push([self.dragData.pop()])
         }
         simulator.handleBaseUpdate("baseWeapon")
+    },
+
+    handleMaterialMoved: function(){
+        var self = simulator.data;
+        for (index in self.materialQueue){
+            if(self.materialQueue[index].length === 0){
+                self.materialQueue.splice(index, 1)
+            }
+        }
     }
 };
 
@@ -351,19 +367,30 @@ simulator.data = {
         baseExp: 0,
         nextLv: 176,
         materialExp: function(){ var self = simulator.data; return self.getMaterialExp()},
-        totalExp: function(){ return (parseInt(this.baseExp) + parseInt(this.materialExp()))},
+        totalExp: function(){var exp=this.baseExp + this.materialExp(); return exp>this.expTable()[35]?this.expTable()[35]:exp },
         rule: function(){ return simulator.data.weaponRarity.getData(this.rarity)},
         expTable: function(){ return simulator.data.expTable.getData(this.rarity)}
     },
 
     getMaterialExp: function(){
-        var calResult = 0;
+        var baseWeaponExp = this.baseWeapon.baseExp;
+        var expResult = 0;
         for(group in this.materialQueue) {
+            sectionResult = 0;
             for (index in this.materialQueue[group]) {
-                calResult += this.materialQueue[group][index]["baseExp"]
+                var thisObj = this.materialQueue[group][index];
+                var basicExp = thisObj.rule().basicExp;
+                var materialBonus = function(){if(thisObj.sWeapon == true){return thisObj.rule().sameWeapon}
+                                    else {return (thisObj.sCategory?thisObj.rule().sameCategory:0) +
+                    (thisObj.rarity===simulator.data.baseWeapon.rarity?thisObj.rule().sameRarity:0)}}();
+                var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0);
+                // TODO: 添加大成功、大赦等 EXP BONUS 时判断逻辑
+                sectionResult += basicExp + materialBonus + grindBonus
             }
+            // TODO: 循环计算特殊能力解放时卡级逻辑，以及自主设定是否已经解放好（仅对 baseExp 已落入区间时有效）
+            expResult += sectionResult
         }
-        return calResult
+        return expResult
     },
 
     queueInfo: {
@@ -380,69 +407,73 @@ simulator.data = {
     materialQueue: [
         [
             {
-                name: "Eternal Psycho Drive",
+                name: "エターナルサイコドライブ",
                 desc: "just a test.",
-                rarity: "r10",
+                rarity: "r14",
                 grind: 0,
-                baseExp: 10
+                baseExp: 0,
+                sCategory: false,
+                sWeapon: false,
+                withEmpr: false,
+                withPoli: false
             },
             {
-                name: "Akatsuki",
+                name: "アカツキ",
                 desc: "just a test.",
-                rarity: "r11",
+                rarity: "r14",
                 grind: 0,
-                baseExp: 20
+                baseExp: 0
             },
             {
-                name: "Kazami no tachi",
+                name: "カザミのタチ",
                 desc: "just a test.",
-                rarity: "r12",
+                rarity: "r14",
                 grind: 0,
-                baseExp: 30
+                baseExp: 0
             },
             {
                 name: "ボクラガソン",
                 desc: "just a test.",
                 rarity: "r13",
                 grind: 0,
-                baseExp: 40
+                baseExp: 0
             },
             {
-                name: "アモシカシテ",
+                name: "アモシカシティ",
                 desc: "just a test.",
                 rarity: "r14",
                 grind: 0,
-                baseExp: 50
+                baseExp: 0
             }
         ],
         [
             {
-                name: "Akatsuki",
+                name: "サイコウォンド",
                 desc: "just a test.",
-                rarity: "r14",
+                rarity: "r12",
                 grind: 0,
-                baseExp: 20
+                baseExp: 120
             },
             {
-                name: "Kazami no tachi",
+                name: "アーレスタリス",
                 desc: "just a test.",
-                rarity: "r14",
+                rarity: "r13",
                 grind: 0,
-                baseExp: 30
+                baseExp: 130
             },
             {
-                name: "Kazami no tachi",
+                name: "ソード",
                 desc: "just a test.",
-                rarity: "r14",
+                rarity: "r123",
                 grind: 0,
-                baseExp: 30
+                baseExp: 0
             },
             {
-                name: "Kazami no tachi",
+                name: "ニレンアギド",
                 desc: "just a test.",
-                rarity: "r14",
+                rarity: "r11",
                 grind: 0,
-                baseExp: 30
+                baseExp: 0
             },
             // {
             //     name: "Kazami no tachi",

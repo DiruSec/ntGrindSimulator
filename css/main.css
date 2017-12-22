@@ -49,18 +49,18 @@ hr{
 
 .img-wrapper p{
     background: #ffc107;
-    font-size: 18px;
+    font-size: 1.25rem;
     padding-right: 5%;
     margin-bottom: 0;
-    left: 0%;
-    bottom: 0%;
+    left: 0;
+    bottom: 0;
     position: absolute;
 }
 
 .panel-weapon dl{
     display: inline-block;
     vertical-align: top;
-    margin-left: 1em;
+    margin-left: 1rem;
     height: 100px;
     position: relative;
 }
@@ -85,21 +85,31 @@ hr{
 /* 共通部分：武器图标 */
 .img-wrapper-small{
     display: inline-block;
-    position: relative;
-    background: #0069d9;
-    overflow: hidden;
+    /*background: #0069d9;*/
+    /*overflow: hidden;*/
     margin-right: 0.5em;
     /*mask-image: url(../img/icon.png)*/
 }
 
 .img-weapon-thumb-small{
-    background: url(../img/icon.png);
+    background: #0069d9 url(../img/icon.png);
     background-size: 60px;
+    position: relative;
     width: 60px;
     height: 60px;
 }
 .img-wrapper-small span{
     display: none;
+}
+
+.img-wrapper-small .weapon-thumb-name{
+    margin: 0;
+    text-align: center;
+    font-size: 10px;
+    width: 60px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .img-weapon-thumb-small:hover>.oi-circle-x{
@@ -116,9 +126,9 @@ hr{
     top: 75%;
 }
 
-.img-wrapper-small p{
+.img-weapon-thumb-small p{
     background: #ffc107;
-    font-size: 14px;
+    font-size: 0.75rem;
     padding-right: 5%;
     margin-bottom: 0;
     left: 0;
@@ -184,23 +194,22 @@ hr{
 #add-material-space{
     /*margin: 0 auto;*/
     /*margin-bottom: .5em;*/
-    width: 90%;
+    width: 30%;
     background: #ffffffe0;
-    border: #0069d9 .1em;
     border-radius: 5px;
     display: none;
     position: absolute;
-    left: 5%;
-    bottom: -4rem;
-    border-style: solid;
-    height: 4rem;
+    right: 5%;
+    bottom: -5rem;
+    height: 5rem;
+    border: 1px solid #BFBFBF;
+    /*box-shadow: 2px 2px 1px #888888;*/
 }
 #add-material-space > * {
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px dashed #060;
+    top: 1%;
+    left: 1%;
+    right: 1%;
+    bottom: 1%;
     position: absolute;
     text-align: center;
 }
