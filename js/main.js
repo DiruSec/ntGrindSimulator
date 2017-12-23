@@ -375,8 +375,19 @@ simulator.data = {
     getMaterialExp: function(){
         var baseWeaponExp = this.baseWeapon.baseExp;
         var expResult = 0;
+        var lvLimit = [11,21,31,35];
+        for (index in this.baseWeapon.expTable()){
+            index = parseInt(index);
+            if (this.baseWeapon.baseExp < this.baseWeapon.expTable()[index]){
+                break;
+            }
+            if (lvLimit.indexOf(index)!= -1){
+                lvLimit.shift()
+            }
+        }
         for(group in this.materialQueue) {
-            sectionResult = 0;
+            var sectionResult = 0;
+            var sectionOverflowed = 0;
             for (index in this.materialQueue[group]) {
                 var thisObj = this.materialQueue[group][index];
                 var basicExp = thisObj.rule().basicExp;
@@ -388,7 +399,14 @@ simulator.data = {
                 sectionResult += basicExp + materialBonus + grindBonus
             }
             // TODO: 循环计算特殊能力解放时卡级逻辑，以及自主设定是否已经解放好（仅对 baseExp 已落入区间时有效）
+            if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[lvLimit[0]]){
+                sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1
+                expResult = this.baseWeapon.expTable()[lvLimit[0]] - baseWeaponExp -1;
+                console.log("Exp Overflow at Lv."+lvLimit[0]+", overflowed exp: "+sectionOverflowed)
+                lvLimit.shift();
+            } else{
             expResult += sectionResult
+            }
         }
         return expResult
     },

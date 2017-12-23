@@ -80,7 +80,7 @@
 		<li>Grind Count: <span class="float-right">{{queue.queueGrind()}}</span></li>
 	</ul>
 	<div class="panel-queue" id="panel-material-list">
-		<draggable :list="groups" :options="{animation: 150}">
+		<draggable :list="groups" :options="{animation: 150}" @end="dragFinish">
 		<div class="container-fluid container-queue" v-for="items,group in groups">
             <span class="oi oi-circle-x" @click="delgrp(group)"></span>
 			<draggable :list="items" @start="dragStart" @end="dragFinish" :options="options" :move="checkLength">
