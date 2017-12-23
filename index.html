@@ -13,6 +13,7 @@
 <script type="text/javascript" src="js/vue/vue.js"></script>
 <script type="text/javascript" src="js/bootstrap/popper.min.js"></script>
 <script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
+<script type="text/javascript" src="js/jquery/jquery.i18n.min.js"></script>
 <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/sortable/Sortable.min.js"></script>
 <script type="text/javascript" src="js/sortable/vuedraggable.min.js"></script>
@@ -21,26 +22,26 @@
 <body>
 <div class="wrapper">
 <nav class="navbar navbar-light bg-light">
-	<span class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
+	<span i18n="nav-title" class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
 	<ul class="nav justify-content-end">
         <li class="nav-item">
-            <a class="nav-link" href="#"> Save </a>
+            <a i18n="nav-save" class="nav-link" href="#"> Save </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
+            <a i18n="nav-settings" class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
         </li>
 		<li class="nav-item">
-			<a class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
+			<a i18n="nav-help" class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
+			<a i18n="nav-about" class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
 		</li>
 	</ul>
 </nav>
 
 <div class="left-wrapper">
 <div class="area-content area-base">
-	<span class="h4 text-muted ml-2">Base Weapon</span>
+	<span i18n="title-base" class="h4 text-muted ml-2">Base Weapon</span>
 	<hr/>
 	<div class="panel-weapon" id="panel-weapon">
 		<div class="img-wrapper">
@@ -49,20 +50,21 @@
             </div>
 		</div>
 		<dl>
-			<dt class="">{{name}}　+{{grind}}</dt>
-			<dt class="">Base EXP: {{baseExp}}</dt>
+			<dt class="">{{name}}　/+{{grind}}</dt>
+			<dt i18n="base-baseexp" class="base-text-baseexp">Base EXP:</dt>
+            <dd>{{baseExp}}</dd>
 			<!--<dt class="">Grind: {{grind}}</dt>-->
-            <dt><button type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base Detail</button></dt>
+            <dt><button i18n="base-editbtn" type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base Detail</button></dt>
 		</dl>
 		<div class="progress-text clearfix">
-			<span class="h5 ml-2">To next level</span>
+			<span i18n="base-tonext" class="ml-2">To Next Level</span>
 			<span class="text-muted mr-2 float-right">{{nextLv}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
 			<div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: 100-(nextLv/(expTable()[grind+1]-expTable()[grind])*100) + '%'}"></div>
 		</div>
 		<div class="progress-text clearfix">
-			<span class="h5 ml-2">Total EXP</span>
+			<span i18n="base-total" class="ml-2">Total EXP</span>
 			<span class="text-muted mr-2 float-right">{{ totalExp() }} / {{expTable()[35]}}</span>
 		</div>
 		<div class="progress" style="height: .5em">
@@ -72,15 +74,15 @@
 </div>
 
 <div class="area-content area-queue">
-	<span class="h4 text-muted ml-2">Material Queue</span>
+	<span i18n="title-queue" class="h4 text-muted ml-2">Material Queue</span>
 	<hr/>
-	<ul class="clearfix">
-		<li>Material EXP: <span class="float-right">{{queue.queueExp()}}</span></li>
-		<li>Material Count: <span class="float-right">{{queue.queueCount()}}</span></li>
-		<li>Grind Count: <span class="float-right">{{queue.queueGrind()}}</span></li>
+	<ul class="queue-material-info">
+		<li i18n="queue-materialexp">Material EXP: </li><span>{{queue.queueExp()}}</span>
+		<li i18n="queue-materialcount">Material Count: </li><span>{{queue.queueCount()}}</span>
+		<li i18n="queue-grindcount">Grind Count: </li><span>{{queue.queueGrind()}}</span>
 	</ul>
 	<div class="panel-queue" id="panel-material-list">
-		<draggable :list="groups" :options="{animation: 150}" @end="dragFinish">
+		<draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @start="grpStart" @end="dragFinish">
 		<div class="container-fluid container-queue" v-for="items,group in groups">
             <span class="oi oi-circle-x" @click="delgrp(group)"></span>
 			<draggable :list="items" @start="dragStart" @end="dragFinish" :options="options" :move="checkLength">
@@ -98,22 +100,28 @@
         <div id="add-material-space">
             <draggable :list="draglist" :options="{group: 'material'}"></draggable>
         </div>
+        <div class="dup-space" id="add-duplicate-group">
+            <draggable :list="duplist" :options="{group: 'dup'}"></draggable>
+        </div>
+        <div class="dup-space" id="add-duplicate-item">
+            <draggable :list="duplist" :options="{group: 'material'}"></draggable>
+        </div>
 
 	</div>
     <ul class="clearfix">
-        <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
+        <button i18n="queue-addbtn" type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
     </ul>
 </div>
 	<div class="area-content area-cost">
-		<span class="h4 text-muted ml-2">Item Cost</span>
+		<span i18n="title-cost" class="h4 text-muted ml-2">Item Cost</span>
 		<hr/>
 		<ul class="clearfix">
-			<li>Meseta Cost: <span class="float-right">1,960,080</span></li>
-			<li>Grinder Cost: <span class="float-right">220</span></li>
-			<li>Lambda Grinder Cost: <span class="float-right">20</span></li>
-			<li>Grind Great-Success (100%): <span class="float-right">3</span></li>
-			<li>Empire Rappy: <span class="float-right">2</span></li>
-			<li>NT Weapon Boost: <span class="float-right">3</span></li>
+			<li i18n="cost-meseta" >Meseta Cost: <span class="float-right">1,960,080</span></li>
+			<li i18n="cost-grinder" >Grinder Cost: <span class="float-right">220</span></li>
+			<li i18n="cost-lamgrinder" >Lambda Grinder Cost: <span class="float-right">20</span></li>
+			<li i18n="cost-greatsuccess" >Grind Great-Success (100%): <span class="float-right">3</span></li>
+			<li i18n="cost-empr" >Empe Embrace: <span class="float-right">2</span></li>
+			<li i18n="cost-ntboost" >NT Weapon Boost: <span class="float-right">3</span></li>
 		</ul>
 	</div>
 
@@ -121,13 +129,13 @@
 
 <div class="right-wrapper">
 	<div class="area-content area-material">
-	<span class="h4 text-muted ml-2">Material List</span>
+	<span i18n="title-list" class="h4 text-muted ml-2">Material List</span>
 	<hr/>
     <ul class="clearfix">
-        <button type="button" class="btn btn-success btn-sm float-right" id="btn-add-material-list" data-toggle="modal" data-target="#editModal">Add Material</button>
+        <button i18n="list-addbtn" type="button" class="btn btn-success btn-sm float-right" id="btn-add-material-list" data-toggle="modal" data-target="#editModal">Add Material</button>
     </ul>
 	<div class="container-fluid container-list" id="container-list" style="width: 100%">
-        <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options">
+        <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options" :clone="clone">
         <div class="img-wrapper-small" v-for="item,index in items">
             <div class="img-weapon-thumb-small">
                 <p> {{item.rule().name}} </p>
@@ -145,7 +153,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">About</h5>
+                    <h5 i18n="title-modal-about" class="modal-title">About</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -168,62 +176,105 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" >Edit Parameters</h5>
+					<h5 i18n="title-modal-edit" class="modal-title" >Edit Parameters</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<div class="element-edit input-group">
-						<span class="input-group-addon">Weapon Name</span>
+						<span i18n="modal-weapon-name" class="input-group-addon">Name</span>
 						<input type="text" class="form-control" id="modal-input-name" v-model="name">
-					</div>
-					<div class="element-edit input-group">
-						<span class="input-group-addon">Description</span>
-						<input type="text" class="form-control" id="modal-input-desc" v-model="desc">
 					</div>
 					<div class="element-edit btn-group" data-toggle="buttons" id="modal-input-rarity">
 						<label class="btn btn-success">
-							<input type="radio" name="options" value="r123"> ★1-3
+							<input type="radio" name="group-rarity" value="r123"> ★1-3
 						</label>
 						<label class="btn btn-primary">
-							<input type="radio" name="options" value="r456"> ★4-6
+							<input type="radio" name="group-rarity" value="r456"> ★4-6
 						</label>
 						<label class="btn btn-danger">
-							<input type="radio" name="options" value="r789"> ★7-9
+							<input type="radio" name="group-rarity" value="r789"> ★7-9
 						</label>
 						<label class="btn btn-warning">
-							<input type="radio" name="options" value="r10"> ★10
+							<input type="radio" name="group-rarity" value="r10"> ★10
 						</label>
 						<label class="btn btn-warning">
-							<input type="radio" name="options" value="r11"> ★11
+							<input type="radio" name="group-rarity" value="r11"> ★11
 						</label>
 						<label class="btn btn-warning">
-							<input type="radio" name="options" value="r12"> ★12
+							<input type="radio" name="group-rarity" value="r12"> ★12
 						</label>
 						<label class="btn btn-info">
-							<input type="radio" name="options" value="r13"> ★13
+							<input type="radio" name="group-rarity" value="r13"> ★13
 						</label>
 						<label class="btn btn-info">
-							<input type="radio" name="options" value="r14"> ★14
+							<input type="radio" name="group-rarity" value="r14"> ★14
 						</label>
 					</div>
 					<div class="element-edit input-group">
-						<span class="input-group-addon">Grind Level</span>
+						<span i18n="modal-grindlv" class="input-group-addon">Grind Level</span>
 						<input type="number" class="form-control" id="modal-input-grind" v-model="grind">
 					</div>
 					<div class="element-edit input-group">
-						<span class="input-group-addon">Next Level</span>
+						<span i18n="modal-nextlv" class="input-group-addon">Next Level</span>
 						<input type="number" class="form-control" id="modal-input-next" v-model="nextLv">
 					</div>
 					<div class="element-edit input-group">
-						<span class="input-group-addon">Base Exp</span>
+						<span i18n="modal-baseexp" class="input-group-addon">Base Exp</span>
 						<input type="number" class="form-control" id="modal-input-total" v-model="baseExp">
 					</div>
+                    <div id="modal-wrapper-material-extra">
+					<div class="element-edit btn-group" data-toggle="buttons">
+						<label class="btn btn-warning">
+                            <input type="checkbox" id="modal-input-withempr"> <p i18n="modal-emb" class="label-for-btn">Empe Embrace</p>
+						</label>
+						<label class="btn btn-warning">
+                            <input type="checkbox" id="modal-input-withpoli"> <p i18n="modal-poli" class="label-for-btn">Politan Smile</p>
+						</label>
+                    </div>
+                    <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-sameset">
+                        <label class="btn btn-info active">
+                            <input  type="radio" name="group-same" value="0"> <p i18n="modal-nosame" class="label-for-btn">Off</p>
+                        </label>
+                        <label class="btn btn-info">
+                            <input  type="radio" name="group-same" value="1"> <p i18n="modal-samecate" class="label-for-btn">Same Category</p>
+                        </label>
+                        <label class="btn btn-info">
+                            <input type="radio" name="group-same" value="2"> <p i18n="modal-sameweapon" class="label-for-btn">Same Weapon</p>
+                        </label>
+                    </div>
+                    <span i18n="modal-hint-samerare" class="text-muted">Same Rarity will be auto recognized.</span>
+                    </div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" id="btn-edit-save">Save changes</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button i18n="modal-savebtn" type="button" class="btn btn-primary" id="btn-edit-save">Save changes</button>
+					<button i18n="modal-cancelbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 i18n="title-modal-settings" class="modal-title">Settings</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="element-edit btn-group" data-toggle="buttons" id="modal-input-language">
+						<label class="btn btn-info active">
+							<input type="radio" name="group-same" value="en"> en
+						</label>
+						<label class="btn btn-info">
+							<input type="radio" name="group-same" value="zh-CN"> cn
+						</label>
+						<label class="btn btn-info">
+							<input type="radio" name="group-same" value="jp"> jp
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>

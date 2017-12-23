@@ -1,9 +1,12 @@
-body{
-    /*font-size: 12px;*/
-    /*font-family: Meiryo, "Microsoft YaHei UI";*/
-    user-select: none;
+html{
+    font-size: 14px;
 }
 
+body{
+    font-family: Meiryo;
+    /*font-family: "MS PGothic", "Osaka";*/
+    user-select: none;
+}
 
 hr{
     margin: .25em;
@@ -30,6 +33,14 @@ hr{
 
 .panel-weapon{
     margin: 1em;
+}
+
+.panel-weapon .base-text-baseexp{
+    display: inline-block;
+}
+
+.panel-weapon dl dd{
+    display: inline-block;
 }
 
 .img-wrapper{
@@ -149,15 +160,17 @@ hr{
 }
 /* 用于排版素材数据 */
 @media screen and (min-width:601px){
-.area-queue li:last-child{
+.queue-material-info span:last-child{
     margin-right: 0;
-    width: 32%;
 }
 }
 
-.area-queue li{
+.queue-material-info li{
     display: inline-block;
-    width: 27%;
+    width: 24%;
+}
+
+.queue-material-info span{
     margin-right: 5%;
 }
 
@@ -192,8 +205,6 @@ hr{
 }
 
 #add-material-space{
-    /*margin: 0 auto;*/
-    /*margin-bottom: .5em;*/
     width: 30%;
     background: #ffffffe0;
     border-radius: 5px;
@@ -203,9 +214,19 @@ hr{
     bottom: -5rem;
     height: 5rem;
     border: 1px solid #BFBFBF;
-    /*box-shadow: 2px 2px 1px #888888;*/
 }
-#add-material-space > * {
+.dup-space{
+    width: 30%;
+    background: #ffffffe0;
+    border-radius: 5px;
+    display: none;
+    position: absolute;
+    left: 5%;
+    bottom: -5rem;
+    height: 5rem;
+    border: 1px solid #BFBFBF;
+}
+#add-material-space > *, .dup-space > *{
     top: 1%;
     left: 1%;
     right: 1%;
@@ -261,6 +282,14 @@ hr{
     display: flex;
 }
 
+#modal-wrapper-material-extra{
+    display: none;
+}
+
+.modal-wrapper .label-for-btn{
+    margin: 0;
+}
+
 /* 小屏专用 */
 @media screen and (max-width:600px){
     .left-wrapper{
@@ -280,9 +309,9 @@ hr{
         justify-content: center;
     }
 
-    .area-queue li{
-        display: inherit;
-        width: 95%;
+    .queue-material-info li{
+        display: inline-block;
+        width: 80%;
     }
 
     .area-cost li{
