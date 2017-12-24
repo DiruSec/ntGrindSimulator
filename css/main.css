@@ -6,6 +6,7 @@ body{
     font-family: Meiryo;
     /*font-family: "MS PGothic", "Osaka";*/
     user-select: none;
+    min-width: 200px;
 }
 
 hr{
@@ -109,9 +110,6 @@ hr{
     width: 60px;
     height: 60px;
 }
-.img-wrapper-small span{
-    display: none;
-}
 
 .img-wrapper-small .weapon-thumb-name{
     margin: 0;
@@ -123,18 +121,12 @@ hr{
     overflow: hidden;
 }
 
-.img-weapon-thumb-small:hover>.oi-circle-x{
-    display: inherit;
+.weapon-thumb-rappy{
+    /*display: inherit;*/
     position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.img-weapon-thumb-small:hover>.oi-cog{
-    display: inherit;
-    position: absolute;
-    right: 0;
-    top: 75%;
+    color: orange;
+    left: 5%;
+    top: 5%;
 }
 
 .img-weapon-thumb-small p{
@@ -153,25 +145,59 @@ hr{
     padding-left: 1rem;
     list-style: none;
     width: 100%;
+    margin-bottom: .5em;
 }
 
 .area-queue{
     margin-bottom: 1rem;
 }
-/* 用于排版素材数据 */
-@media screen and (min-width:601px){
-.queue-material-info span:last-child{
-    margin-right: 0;
-}
+
+.queue-material-info{
+    width: 100%;
+    padding-right: 2%;
+    text-align: justify;
+    text-align-last: justify;
 }
 
 .queue-material-info li{
     display: inline-block;
-    width: 24%;
 }
 
 .queue-material-info span{
-    margin-right: 5%;
+    margin-left: 10%;
+}
+
+.queue-tool-set{
+    position: relative;
+    height: 1.5rem;
+}
+.queue-tool-set div{
+    display: inline-block;
+    position: absolute;
+    right: 1rem;
+}
+.queue-tool-set div span{
+    padding: .3rem;
+    margin-left: 1.5rem;
+    border: 1px solid #BFBFBF;
+    border-radius: .5rem;
+}
+
+#queue-tool-indicator{
+    display: inline-block;
+    font-size: 12px;
+}
+
+#queue-tool-indicator > *{
+    display: inline-block;
+}
+
+#queue-tool-indicator > p{
+    margin: 0 1rem 0 0;
+}
+
+.queue-tool-set div span:hover{
+    box-shadow: 2px 2px 2px #BFBFBF;
 }
 
 .container-queue{
@@ -186,18 +212,43 @@ hr{
 }
 
 .container-queue:hover{
+    background: #E8F3FFCC;
+}
+
+.container-queue.selected{
     background: #c3e2ffcc;
 }
 
-.container-queue span {
-    display: none;
+.container-queue .img-wrapper-small.selected{
+    border: 3px solid #9ED0FFCC;
+    border-radius: 3px;
+    background: #9ED0FF;
 }
 
-.container-queue:hover>span{
-    display: inherit;
+#indicate-bigsuccess{
+     color: green;
+     position: absolute;
+     top: -.5rem;
+     left: -.5rem;
+}
+
+#indicate-overflowed{
+    background: #EF8181;
+    border: none 0.1px #EF8181;
+    border-radius: .5rem;
+    padding: .1rem;
+    color: white;
+    z-index: 1;
     position: absolute;
+    display: inline-block;
+    font-size: 0.8rem;
+    right: 0;
     top: 0;
-    left: 0;
+}
+
+#indicate-overflowed > *{
+    display: inline-block;
+    margin: 0;
 }
 
 .panel-queue{
@@ -255,6 +306,35 @@ hr{
     margin-right: 1em;
 }
 
+.material-tool-set{
+    position: relative;
+    height: 1.5rem;
+}
+.material-tool-set div{
+    display: inline-block;
+    position: absolute;
+    right: 1rem;
+}
+.material-tool-set div span{
+    padding: .3rem;
+    margin-left: 1.5rem;
+    border: 1px solid #BFBFBF;
+    border-radius: .5rem;
+}
+.material-tool-set div span:hover{
+    box-shadow: 2px 2px 2px #BFBFBF;
+}
+
+.container-list .img-wrapper-small:hover{
+    background: #E8F3FFCC;
+}
+
+.container-list .img-wrapper-small.selected,.container-list .img-wrapper-small.selected:hover{
+    border: 3px solid #9ED0FFCC;
+    border-radius: 3px;
+    background: #9ED0FF;
+}
+
 /* 弹出工具框部分 */
 .popup-ul{
     list-style-type: none;
@@ -282,6 +362,10 @@ hr{
     display: flex;
 }
 
+.element-edit label.btn{
+    margin-bottom: 0;
+}
+
 #modal-wrapper-material-extra{
     display: none;
 }
@@ -289,6 +373,17 @@ hr{
 .modal-wrapper .label-for-btn{
     margin: 0;
 }
+
+#modal-input-sameset{
+    margin-bottom: 0;
+}
+#modal-input-sameset-wrapper{
+    margin-bottom: .5em;
+}
+#modal-input-sameset-wrapper span{
+    font-size: .8rem
+}
+
 
 /* 小屏专用 */
 @media screen and (max-width:600px){
@@ -309,16 +404,25 @@ hr{
         justify-content: center;
     }
 
+    .queue-material-info{
+        text-align: inherit;
+        text-align-last: inherit;
+    }
     .queue-material-info li{
         display: inline-block;
-        width: 80%;
+        width: 75%
+    }
+    .queue-material-info span{
+        margin-left: 0;
+        float: right;
     }
 
     .area-cost li{
         width: 95%;
     }
 
-    .element-edit.btn-group{
+    #modal-input-rarity{
         display: inherit;
+
     }
 }

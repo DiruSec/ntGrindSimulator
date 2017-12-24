@@ -13,6 +13,8 @@
     "queue-materialexp": "Material EXP: ",
     "queue-materialcount": "Material Count: ",
     "queue-grindcount": "Grind Count: ",
+    "queue-overflowed": "O.F EXP: ",
+    "queue-same-not-match": "A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.",
     "queue-addbtn": "Add Material",
     "title-cost": "Cost",
     "cost-meseta": "Meseta Cost:",

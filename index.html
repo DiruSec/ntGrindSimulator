@@ -77,20 +77,44 @@
 	<span i18n="title-queue" class="h4 text-muted ml-2">Material Queue</span>
 	<hr/>
 	<ul class="queue-material-info">
-		<li i18n="queue-materialexp">Material EXP: </li><span>{{queue.queueExp()}}</span>
-		<li i18n="queue-materialcount">Material Count: </li><span>{{queue.queueCount()}}</span>
-		<li i18n="queue-grindcount">Grind Count: </li><span>{{queue.queueGrind()}}</span>
+        <li i18n="queue-materialexp">Material EXP: </li><span>{{queue.queueExp()}}</span>
+        <li i18n="queue-materialcount">Material Count: </li><span>{{queue.queueCount()}}</span>
+        <li i18n="queue-grindcount">Grind Count: </li><span>{{queue.queueGrind()}}</span>
+	</ul>
+    <!--<ul class="queue-material-overflow" style="color: red">-->
+        <!--<li i18n="queue-overflowed">Overflowed EXP: </li>-->
+        <!--<span :style="">Lv.10</span>-->
+        <!--<span :style="">Lv.20</span>-->
+        <!--<span :style="">Lv.30</span>-->
+        <!--<span :style="">Lv.35</span>-->
+    <!--</ul>-->
+        <ul id="queue-tool-indicator" :style="{display: material.data.sameWeaponNotMatch.happened?'inherit':'none'}">
+        <span class="oi oi-warning" style="color: darkorange" ></span>
+        <p i18n="queue-same-not-match">A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.</p>
+        </ul>
+	<ul class="queue-tool-set">
+        <div>
+		<span class="oi oi-trash" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-delete" @click="del"></span>
+		<span class="oi oi-clipboard" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-duplicate" @click="duplicate"></span>
+		<span class="oi oi-beaker" :style="{display: ((selectedqueue.group!==null&&selectedqueue.index===null)?'inline':'none')}" id="queue-tool-bigsuccess" @click="toggleBS"></span>
+		<span class="oi oi-pencil" :style="{display: (selectedqueue.index!==null?'inline':'none')}" id="queue-tool-edit" @click="edit"></span>
+		<span class="oi oi-plus" id="queue-tool-add" data-toggle="modal" data-target="#editModal"></span>
+		</div>
 	</ul>
 	<div class="panel-queue" id="panel-material-list">
-		<draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @start="grpStart" @end="dragFinish">
-		<div class="container-fluid container-queue" v-for="items,group in groups">
-            <span class="oi oi-circle-x" @click="delgrp(group)"></span>
-			<draggable :list="items" @start="dragStart" @end="dragFinish" :options="options" :move="checkLength">
-            <div class="img-wrapper-small" v-for="item,index in items">
+		<draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @end="dragFinish">
+		<div class="container-fluid container-queue" :class="{selected: selectedqueue.data == items}" v-for="items,group in groups" @click="selected(items,group,null)">
+            <span class="oi oi-beaker" id="indicate-bigsuccess" :style="{display: items.bigSuccess==true?'inline':'none'}"></span>
+            <div id="indicate-overflowed" :style="{display: material.checkPos(group)[0]==true?'inline':'none'}">
+                <span class="oi oi-warning"></span>
+                <p i18n="queue-overflowed">過剰EXP: </p>
+                <p><strong>{{material.checkPos(group)[1]}}</strong></p>
+            </div>
+			<draggable :list="items.data" @end="dragFinish" :options="options" :move="checkLength">
+            <div class="img-wrapper-small" :class="{selected: selectedqueue.data == item}" @click.stop="selected(item,group,index)" v-for="item,index in items.data">
                 <div class="img-weapon-thumb-small">
+                    <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
                     <p>{{item.rule().name}}/+{{item.grind}}</p>
-                    <span class="oi oi-circle-x" @click="del(index,group)"></span>
-                    <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material" v-bind:data-group="group" v-bind:data-index="index"></span>
                 </div>
 				<p class="weapon-thumb-name">{{ item.name }}</p>
             </div>
@@ -106,11 +130,7 @@
         <div class="dup-space" id="add-duplicate-item">
             <draggable :list="duplist" :options="{group: 'material'}"></draggable>
         </div>
-
 	</div>
-    <ul class="clearfix">
-        <button i18n="queue-addbtn" type="button" class="btn btn-success btn-sm float-right" id="btn-add-material" data-toggle="modal" data-target="#editModal">Add Material</button>
-    </ul>
 </div>
 	<div class="area-content area-cost">
 		<span i18n="title-cost" class="h4 text-muted ml-2">Item Cost</span>
@@ -131,16 +151,20 @@
 	<div class="area-content area-material">
 	<span i18n="title-list" class="h4 text-muted ml-2">Material List</span>
 	<hr/>
-    <ul class="clearfix">
-        <button i18n="list-addbtn" type="button" class="btn btn-success btn-sm float-right" id="btn-add-material-list" data-toggle="modal" data-target="#editModal">Add Material</button>
+    <ul class="material-tool-set">
+        <div>
+            <span class="oi oi-trash" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-delete" @click="del"></span>
+            <span class="oi oi-clipboard" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-duplicate" @click="duplicate"></span>
+            <span class="oi oi-pencil" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-edit" @click="edit"></span>
+            <span class="oi oi-plus" id="material-tool-add" data-toggle="modal" data-target="#editModal"></span>
+        </div>
     </ul>
 	<div class="container-fluid container-list" id="container-list" style="width: 100%">
         <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options" :clone="clone">
-        <div class="img-wrapper-small" v-for="item,index in items">
+        <div class="img-wrapper-small" v-for="item,index in items" :class="{selected: selectedmaterial.data == item}" @click="selected(item,index)">
             <div class="img-weapon-thumb-small">
-                <p> {{item.rule().name}} </p>
-                <span class="oi oi-circle-x" @click="del(index)"></span>
-                <span class="oi oi-cog" data-toggle="modal" data-target="#editModal" id="btn-edit-material-list" v-bind:data-index="index"></span>
+                <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
+                <p>{{item.rule().name}}/+{{item.grind}}</p>
             </div>
 			<p class="weapon-thumb-name">{{ item.name }}</p>
         </div>
@@ -233,6 +257,7 @@
                             <input type="checkbox" id="modal-input-withpoli"> <p i18n="modal-poli" class="label-for-btn">Politan Smile</p>
 						</label>
                     </div>
+                    <div id="modal-input-sameset-wrapper">
                     <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-sameset">
                         <label class="btn btn-info active">
                             <input  type="radio" name="group-same" value="0"> <p i18n="modal-nosame" class="label-for-btn">Off</p>
@@ -244,7 +269,8 @@
                             <input type="radio" name="group-same" value="2"> <p i18n="modal-sameweapon" class="label-for-btn">Same Weapon</p>
                         </label>
                     </div>
-                    <span i18n="modal-hint-samerare" class="text-muted">Same Rarity will be auto recognized.</span>
+                        <span i18n="modal-hint-samerare" class="text-muted">Same Rarity will be auto recognized.</span>
+                        </div>
                     </div>
 				</div>
 				<div class="modal-footer">

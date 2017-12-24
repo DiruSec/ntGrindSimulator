@@ -13,6 +13,8 @@
     "queue-materialexp": "素材EXP:",
     "queue-materialcount": "素材数量:",
     "queue-grindcount": "强化次数:",
+    "queue-overflowed": "溢出EXP: ",
+    "queue-same-not-match": "某武器设置为了“同名武器”，但其和本体武器的稀有度不符。",
     "queue-addbtn": "追加",
     "title-cost": "Cost",
     "cost-meseta": "美塞塔",
@@ -34,7 +36,7 @@
     "modal-nosame": "无",
     "modal-samecate": "同武器种",
     "modal-sameweapon": "同名武器",
-    "modal-hint-samerare": "同稀有度奖励将会自动判定。",
+    "modal-hint-samerare": "※ 同稀有度奖励将会自动判定。",
     "modal-savebtn": "OK",
     "modal-cancelbtn": "Close",
     "title-modal-settings": "设定"

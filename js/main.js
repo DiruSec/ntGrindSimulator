@@ -18,8 +18,9 @@ var simulator = {
         this.createEditModel();
         this.createPanel();
         this.createMaterialQueue();
+        this.createListenEvent();
         this.createMaterialList();
-        this.handleBaseUpdate("baseWeapon")
+        this.handleBaseUpdate("baseWeapon");
     },
 
     createEditModel: function() {
@@ -27,12 +28,7 @@ var simulator = {
             el: "#editModal",
             data: simulator.data.editorData
         });
-        $("body").on("click", "#btn-edit-base", this.clickEditButton);
         $("body").on("click", "#btn-edit-save", this.clickSaveButton);
-        $("body").on("click", "#btn-edit-material", this.clickMaterialButton);
-        $("body").on("click", "#btn-edit-material-list", this.clickMaterialListButton);
-        $("body").on("click", "#btn-add-material", this.clickAddMaterialButton);
-        $("body").on("click", "#btn-add-material-list", this.clickAddMaterialListButton);
         $("#editModal").on("hide.bs.modal", this.handleCloseModal);
         $("#settingsModal").on("show.bs.modal", this.handleInitSettings);
         $("#modal-input-total").on("change", this.handleBaseChange);
@@ -42,15 +38,25 @@ var simulator = {
         $("#modal-input-next").on("change", this.handleNextChange);
         $("#modal-wrapper-material-extra").on("change", this.handleSelectionChange);
     },
+
+    createListenEvent: function(){
+        $("body").on("click", "#btn-edit-base", this.clickEditButton);
+        // $("body").on("click", "#btn-edit-material", this.clickMaterialButton);
+        $("body").on("click", "#material-tool-add", this.clickAddMaterialListButton);
+        $("body").on("click", "#queue-tool-add", this.clickAddMaterialButton);
+        // $("body").on("click", "#btn-add-material-list", this.clickMaterialListButton);
+        // $("body").on("click", ".container-queue", this.handleQueueSelection);
+    },
+
     addMaterialProperty: function(){
         var self = simulator.data;
         for (group in self.materialQueue){
-            for (index in self.materialQueue[group]){
-                self.materialQueue[group][index]["rule"]  = function(){ return simulator.data.weaponRarity.getData(this.rarity)};
-                self.materialQueue[group][index]["expTable"] = function(){ return simulator.data.expTable.getData(this.rarity)};
-                self.materialQueue[group][index].withEmpr==undefined?self.materialQueue[group][index].withEmpr=false:{};
-                self.materialQueue[group][index].withPoli==undefined?self.materialQueue[group][index].withPoli=false:{};
-                self.materialQueue[group][index].sameSet==undefined?self.materialQueue[group][index].sameSet=0:{};
+            for (index in self.materialQueue[group].data){
+                self.materialQueue[group].data[index]["rule"]  = function(){ return simulator.data.weaponRarity.getData(this.rarity)};
+                self.materialQueue[group].data[index]["expTable"] = function(){ return simulator.data.expTable.getData(this.rarity)};
+                self.materialQueue[group].data[index].withEmpr==undefined?self.materialQueue[group].data[index].withEmpr=false:{};
+                self.materialQueue[group].data[index].withPoli==undefined?self.materialQueue[group].data[index].withPoli=false:{};
+                self.materialQueue[group].data[index].sameSet==undefined?self.materialQueue[group].data[index].sameSet=0:{};
             }
         }
         for (index in self.materialList){
@@ -80,19 +86,31 @@ var simulator = {
                         queue: simulator.data.queueInfo,
                         options: {animation: 150, group:'material', pull:'clone'},
                         draglist: simulator.data.dragData,
-                        duplist: simulator.data.duplicateData}
+                        duplist: simulator.data.duplicateData,
+                        selectedqueue: {data: '', group:null, index:null},
+                        material: simulator.data.materialAttention}
                 },
             methods: {
-                del: function (index,grp) {
-                    this.groups[grp].splice(index, 1);
-                    if (this.groups[grp].length === 0){
-                        this.groups.splice(grp, 1)
+                del: function () {
+                    var grp = this.selectedqueue.group;
+                    var index = this.selectedqueue.index;
+                    if (grp!==null && index!==null){
+                        this.groups[grp].data.splice(index, 1);
+                        if (this.groups[grp].data.length === 0){
+                            this.groups.splice(grp, 1)
+                        }
+                    } else if (grp!==null && index===null){
+                        this.groups.splice(grp, 1);
                     }
+                    this.selectedqueue.data = '';
+                    this.selectedqueue.group = null;
+                    this.selectedqueue.index = null;
                     simulator.handleBaseUpdate("baseWeapon")
                 },
-                delgrp: function(grp){
-                    this.groups.splice(grp, 1);
-                    simulator.handleBaseUpdate("baseWeapon")
+                edit: function(){
+                    if (this.selectedqueue.index !== null){
+                        simulator.clickMaterialButton(this.selectedqueue.group, this.selectedqueue.index);
+                    }
                 },
                 dragStart: function(){
                     $("#add-material-space").show();
@@ -101,21 +119,48 @@ var simulator = {
                 dragFinish: function(){
                     simulator.handleBaseUpdate("baseWeapon");
                     simulator.handleMaterialMoved();
-                    simulator.handleAddDragItem();
-                    simulator.handleDupItem();
-                    $("#add-material-space").hide();
-                    $("#add-duplicate-item").hide();
-                    $("#add-duplicate-group").hide()
-                },
-                grpStart: function(){
-                    $("#add-duplicate-group").show()
+                    this.selectedqueue.data = '';
+                    this.selectedqueue.group = null;
+                    this.selectedqueue.index = null;
                 },
                 clone: function(original){
                     return Object.assign({}, original);
                 },
+                duplicate: function(){
+                    var grp = this.selectedqueue.group;
+                    var index = this.selectedqueue.index;
+                    if (grp!==null && index!==null){
+                        simulator.handleAddMaterial(Object.assign({}, simulator.data.materialQueue[grp].data[index]))
+                    } else if (grp!==null && index===null){
+                        simulator.handleDuplicateGroup(simulator.data.materialQueue[grp])
+                    }
+                    // this.selectedqueue.data = '';
+                    // this.selectedqueue.group = null;
+                    // this.selectedqueue.index = null;
+                    simulator.handleBaseUpdate("baseWeapon")
+                },
+                toggleBS: function(){
+                    var self = simulator.data;
+                    var grp = this.selectedqueue.group;
+                    self.materialQueue[grp].bigSuccess!==true ?
+                        self.materialQueue[grp].bigSuccess=true : self.materialQueue[grp].bigSuccess=false;
+                    simulator.handleBaseUpdate("baseWeapon")
+                },
                 checkLength: function(evt){
                     if(evt.to !== evt.from && evt.relatedContext.list.length >= 5){
                         return false;
+                    }
+                },
+                selected: function(item,grp,index){
+                    if (this.selectedqueue.data != item) {
+                        this.selectedqueue.data = item;
+                        this.selectedqueue.group = grp;
+                        this.selectedqueue.index = index;
+                        // console.log(item,grp,index)
+                    } else {
+                        this.selectedqueue.data = '';
+                        this.selectedqueue.group = null;
+                        this.selectedqueue.index = null
                     }
                 }
             }
@@ -124,14 +169,25 @@ var simulator = {
 
     createMaterialList: function(){
         var list = new Vue({
-            el: '.container-list',
+            el: '.area-material',
             data: function(){
                 return {items: simulator.data.materialList,
-                        options: {animation: 150, group:{name: 'material', pull:'clone', put:false}}}
+                        options: {animation: 150, group:{name: 'material', pull:'clone', put:false}},
+                        selectedmaterial: {data: '', index:null}}
             },
             methods: {
-                del: function (index) {
-                    this.items.splice(index, 1);
+                del: function () {
+                    var index = this.selectedmaterial.index;
+                    if (index!==null){
+                        this.items.splice(index, 1);
+                    }
+                    this.selectedmaterial.data = '';
+                    this.selectedmaterial.index = null;
+                },
+                edit: function(){
+                    if (this.selectedmaterial.index !== null){
+                        simulator.clickMaterialListButton(this.selectedmaterial.index);
+                    }
                 },
                 dragStart: function(){
                     $("#add-material-space").show()
@@ -139,15 +195,33 @@ var simulator = {
                 dragFinish: function(){
                     simulator.handleBaseUpdate("baseWeapon");
                     simulator.handleAddDragItem();
-                    $("#add-material-space").hide()
+                    $("#add-material-space").hide();
+                    this.selectedmaterial.data = '';
+                    this.selectedmaterial.index = null;
                 },
                 checkLength: function(evt){
                     if(evt.to.parentElement.id !== "add-material-space" && evt.to !== evt.from && evt.relatedContext.list.length >= 5){
                         return false;
                     }
                 },
+                duplicate: function(){
+                    var index = this.selectedmaterial.index;
+                    if (index!==null){
+                        simulator.handleAddMaterialList(Object.assign({}, simulator.data.materialList[index]))
+                    }
+                },
                 clone: function(original){
                     return Object.assign({}, original);
+                },
+                selected: function(item,index){
+                    if (this.selectedmaterial.data != item) {
+                        this.selectedmaterial.data = item;
+                        this.selectedmaterial.index = index;
+                        console.log(this.selectedmaterial)
+                    } else {
+                        this.selectedmaterial.data = '';
+                        this.selectedmaterial.index = null
+                    }
                 }
             }
         })
@@ -180,7 +254,7 @@ var simulator = {
             }
         }
         if (self.editorSource.editType === "addMaterialToQueue"){
-            simulator.handleAddMaterial()
+            simulator.handleAddMaterial(self.addData)
         } else if (self.editorSource.editType === "addMaterialToList"){
             simulator.handleAddMaterialList(self.addData)
         }
@@ -189,26 +263,28 @@ var simulator = {
         $("#editModal").modal('hide');
     },
 
-    clickMaterialButton: function(){
+    clickMaterialButton: function(grp,ind){
         var self = simulator.data;
-        var dataGroup = $(this).attr("data-group");
-        var dataIndex = $(this).attr("data-index");
-        for (index in self.materialQueue[dataGroup][dataIndex]){
-            self.editorData[index] = self.materialQueue[dataGroup][dataIndex][index]
+        var dataGroup = grp;
+        var dataIndex = ind;
+        for (index in self.materialQueue[dataGroup].data[dataIndex]){
+            self.editorData[index] = self.materialQueue[dataGroup].data[dataIndex][index]
         }
         simulator.handleEditorRarity();
         simulator.handleEditorSelection();
-        simulator.updateEditType(self.materialQueue[dataGroup][dataIndex], "materialQueue")
+        simulator.updateEditType(self.materialQueue[dataGroup].data[dataIndex], "materialQueue");
+        $("#editModal").modal('show')
     },
 
-    clickMaterialListButton: function(){
-        var dataIndex = $(this).attr("data-index");
+    clickMaterialListButton: function(ind){
+        var dataIndex = ind;
         for (index in simulator.data.materialList[dataIndex]){
             simulator.data.editorData[index] = simulator.data.materialList[dataIndex][index]
         }
         simulator.handleEditorRarity();
         simulator.handleEditorSelection();
         simulator.updateEditType(simulator.data.materialList[dataIndex], "materialList")
+        $("#editModal").modal('show')
     },
 
     clickAddMaterialButton: function(){
@@ -217,7 +293,7 @@ var simulator = {
         }
         simulator.handleEditorRarity();
         simulator.handleEditorSelection();
-        simulator.updateEditType(simulator.data.addData, "addMaterialToQueue")
+        simulator.updateEditType(simulator.data.addData, "addMaterialToQueue");
     },
 
     clickAddMaterialListButton: function(){
@@ -238,17 +314,17 @@ var simulator = {
         }
     },
 
-    handleAddMaterial: function(){
+    handleAddMaterial: function(object){
         var self = simulator.data;
         var queueLength = self.materialQueue.length;
         if (queueLength === 0){
-            self.materialQueue.push([self.addData])
+            self.materialQueue.push({data: [object]})
         } else{
-            var groupLength = self.materialQueue[queueLength-1].length;
+            var groupLength = self.materialQueue[queueLength-1].data.length;
             if (groupLength >= 5){
-                self.materialQueue.push([self.addData])
+                self.materialQueue.push({data: [object]})
             }else{
-                self.materialQueue[queueLength-1].push(self.addData)
+                self.materialQueue[queueLength-1].data.push(object)
             }
         }
         self.addData = new BlankData()
@@ -358,6 +434,11 @@ var simulator = {
                 break;
             }
         }
+        simulator.data.materialAttention.reset();
+    },
+
+    handleDataUpdate: function(){
+
     },
 
     handleInitSettings: function(){
@@ -379,7 +460,7 @@ var simulator = {
     handleAddDragItem: function() {
         var self = simulator.data;
         if (self.dragData.length > 0){
-            self.materialQueue.push([self.dragData.pop()])
+            self.materialQueue.push({data: [self.dragData.pop()]})
         }
         simulator.handleBaseUpdate("baseWeapon")
     },
@@ -387,10 +468,26 @@ var simulator = {
     handleMaterialMoved: function(){
         var self = simulator.data;
         for (index in self.materialQueue){
-            if(self.materialQueue[index].length === 0){
+            if(self.materialQueue[index].data.length === 0){
                 self.materialQueue.splice(index, 1)
             }
         }
+    },
+
+    handleDuplicateGroup: function(data){
+        var self = simulator.data;
+        if (data.data.length>0){
+            var newObject = {data: []};
+            for (index in data.data) {
+                newObject.data.push(Object.assign({}, data.data[index]))
+            }
+            data.bigSuccess===true?newObject.bigSuccess=true:newObject.bigSuccess=false;
+            simulator.data.materialQueue.push(newObject)
+        }
+    },
+
+    handleQueueSelection: function(){
+        $(this).toggleClass("selected")
     },
 
     handleCloseModal: function(){
@@ -399,16 +496,8 @@ var simulator = {
             self.editorData[index] = self.defaultData[index];
         }
         self.addData = new BlankData();
-    },
-
-    handleDupItem: function(){
-        // TODO: 区分传入的是 group 还是 item 并做对应处理。需要深拷贝。
-        var self = simulator.data;
-        if (self.duplicateData.length > 0){
-            self.materialQueue.push(self.duplicateData.pop())
-        }
-        simulator.handleBaseUpdate("baseWeapon")
     }
+
 };
 
 BlankData = function(){
@@ -462,18 +551,6 @@ simulator.data = {
     dragData: [],
     duplicateData: [],
 
-    baseWeapon: {
-        name: "(´・ω・｀)",
-        rarity: "r14",
-        grind: 0,
-        baseExp: 0,
-        nextLv: 176,
-        materialExp: function(){ var self = simulator.data; return self.getMaterialExp()},
-        totalExp: function(){var exp=this.baseExp + this.materialExp(); return exp>this.expTable()[35]?this.expTable()[35]:exp },
-        rule: function(){ return simulator.data.weaponRarity.getData(this.rarity)},
-        expTable: function(){ return simulator.data.expTable.getData(this.rarity)}
-    },
-
     getMaterialExp: function(){
         var baseWeaponExp = this.baseWeapon.baseExp;
         var expResult = 0;
@@ -486,34 +563,43 @@ simulator.data = {
         for(group in this.materialQueue) {
             var sectionResult = 0;
             var sectionOverflowed = 0;
-            for (index in this.materialQueue[group]) {
-                var thisObj = this.materialQueue[group][index];
+            for (index in this.materialQueue[group].data) {
+                var thisObj = this.materialQueue[group].data[index];
                 var basicExp = thisObj.rule().basicExp;
                 var materialBonus = function() {
                     if(simulator.data.baseWeapon.rarity == thisObj.rarity && thisObj.sameSet == 2) {
                         return thisObj.rule().sameWeapon
                     } else {
                         if (thisObj.sameSet == 2) {
-                            console.log("Has been set to Same Weapon but rarity doesn\'t match.");
+                            simulator.data.materialAttention.configure("sameWeaponNotMatch", true, null, null);
                         }
                         return (thisObj.sameSet==1?thisObj.rule().sameCategory:0) +
                             (thisObj.rarity===simulator.data.baseWeapon.rarity?thisObj.rule().sameRarity:0)
                     }}();
                 var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0);
-                // TODO: 添加大成功、大赦等 EXP BONUS 时判断逻辑
+                if (this.materialQueue[group].bigSuccess){
+                    basicExp = Math.ceil(basicExp*1.5);
+                    materialBonus = Math.ceil(materialBonus*1.5);
+                    grindBonus = Math.ceil(grindBonus*1.5)
+                }
+                //TODO: 大赦选项和计算
                 sectionResult += basicExp + materialBonus + grindBonus
             }
             // TODO: 循环计算特殊能力解放时卡级逻辑，以及自主设定是否已经解放好（仅对 baseExp 已落入区间时有效）
             if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[lvLimit[0]]){
-                sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1
+                sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1;
                 expResult = this.baseWeapon.expTable()[lvLimit[0]] - baseWeaponExp -1;
-                console.log("Exp Overflow at Lv."+lvLimit[0]+", overflowed exp: "+sectionOverflowed)
+                this.materialAttention.configure([lvLimit[0]], true, sectionOverflowed, group);
                 lvLimit.shift();
             } else{
-            expResult += sectionResult
+                expResult += sectionResult;
             }
         }
         return expResult
+    },
+
+    calculateBonus: function(){
+
     },
 
     queueInfo: {
@@ -521,10 +607,22 @@ simulator.data = {
         queueCount: function(){ var self = simulator.data; return function(){
             var count = 0;
             for (groups in self.materialQueue){
-                count += self.materialQueue[groups].length
+                count += self.materialQueue[groups].data.length
             }
             return count}()},
         queueGrind: function(){ var self = simulator.data; return self.materialQueue.length}
+    },
+
+    baseWeapon: {
+        name: "(´・ω・｀)",
+        rarity: "r13",
+        grind: 0,
+        baseExp: 0,
+        nextLv: 160,
+        materialExp: function(){ var self = simulator.data; return self.getMaterialExp()},
+        totalExp: function(){var exp=this.baseExp + this.materialExp(); return exp>this.expTable()[35]?this.expTable()[35]:exp },
+        rule: function(){ return simulator.data.weaponRarity.getData(this.rarity)},
+        expTable: function(){ return simulator.data.expTable.getData(this.rarity)}
     },
 
     defaultData:{
@@ -539,49 +637,110 @@ simulator.data = {
         withPoli : false
     },
 
-    materialQueue: [
-        [
-            {
-                name: "エターナルサイコドライブ",
-                rarity: "r14",
-                grind: 0,
-                baseExp: 0,
-                sameSet: 0,
-                withEmpr: false,
-                withPoli: false
-            },
-            {
-                name: "アカツキ",
-                rarity: "r14",
-                grind: 0,
-                baseExp: 0
-            },
-            {
-                name: "カザミのタチ",
-                rarity: "r14",
-                grind: 0,
-                baseExp: 0
-            },
-            {
-                name: "ボクラガソン",
-                rarity: "r13",
-                grind: 0,
-                baseExp: 0
-            },
-            {
-                name: "アモシカシティ",
-                rarity: "r14",
-                grind: 0,
-                baseExp: 0
+    materialAttention: {
+        reset: function(){
+            for (index in this.data){
+                this.data[index].happened = false;
+                this.data[index].exp = 0;
+                this.data[index].position = 0;
             }
-        ],
-        [
-            {
-                name: "サイコウォンド",
-                rarity: "r12",
-                grind: 0,
-                baseExp: 0
+        },
+        configure: function(dataName,happenedData,expData,positionData){
+            this.data[dataName].happened = happenedData;
+            this.data[dataName].exp = expData;
+            this.data[dataName].position = positionData;
+        },
+        check: function(){
+            for (index in this.data){
+                if (this.data[index].happened){
+                    return true;
+                }
+            }
+            return false;
+        },
+        checkPos: function(pos){
+            for (index in this.data) {
+                if (this.data[index].position == pos && this.data[index].happened) {
+                    return [true, this.data[index].exp]
+                }
+            }
+            return [false,0]
+        },
+        data:{
+            "11": {
+                happened: false,
+                exp: 0,
+                position: 0
             },
+            "21": {
+                happened: false,
+                exp: 0,
+                position: 0
+            },
+            "31": {
+                happened: false,
+                exp: 0,
+                position: 0
+            },
+            "35": {
+                happened: false,
+                exp: 0,
+                position: 0
+            },
+            sameWeaponNotMatch:{
+                happened: false,
+                position: 0
+            }}
+    },
+
+    materialQueue: [
+        {
+            bigSuccess: false,
+            data: [
+                {
+                    name: "エターナルサイコドライブ",
+                    rarity: "r14",
+                    grind: 0,
+                    baseExp: 0,
+                    sameSet: 0,
+                    withEmpr: false,
+                    withPoli: false
+                },
+                {
+                    name: "アカツキ",
+                    rarity: "r14",
+                    grind: 0,
+                    baseExp: 0
+                },
+                {
+                    name: "カザミのタチ",
+                    rarity: "r14",
+                    grind: 0,
+                    baseExp: 0
+                },
+                {
+                    name: "ボクラガソン",
+                    rarity: "r13",
+                    grind: 0,
+                    baseExp: 0
+                },
+                {
+                    name: "アモシカシティ",
+                    rarity: "r14",
+                    grind: 0,
+                    baseExp: 0
+                }
+            ]
+        },
+        {
+            bigSuccess: false,
+            data :[
+                {
+                    name: "サイコウォンド",
+                    rarity: "r12",
+                    grind: 0,
+                    baseExp: 0
+                },
             {
                 name: "アーレスタリス",
                 rarity: "r13",
@@ -599,14 +758,9 @@ simulator.data = {
                 rarity: "r11",
                 grind: 0,
                 baseExp: 0
-            },
-            // {
-            //     name: "Kazami no tachi",
-            //     rarity: "r14",
-            //     grind: 0,
-            //     baseExp: 30
-            // }
+            }
         ]
+        }
     ],
 
     materialList:[

@@ -13,6 +13,8 @@
     "queue-materialexp": "素材EXP:",
     "queue-materialcount": "素材数:",
     "queue-grindcount": "実行回数:",
+    "queue-overflowed": "過剰EXP: ",
+    "queue-same-not-match": "ある素材が「同名武器」に設定されていますが、ベース武器とのレア度が合わない。",
     "queue-addbtn": "追加",
     "title-cost": "Cost",
     "cost-meseta": "メセタ",
@@ -34,7 +36,7 @@
     "modal-nosame": "なし",
     "modal-samecate": "同武器種",
     "modal-sameweapon": "同名武器",
-    "modal-hint-samerare": "同レア度ボーナスは自動で判定します。",
+    "modal-hint-samerare": "※ 同レア度ボーナスは自動で判定します。",
     "modal-savebtn": "OK",
     "modal-cancelbtn": "Close",
     "title-modal-settings": "設定"
