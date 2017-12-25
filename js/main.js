@@ -36,14 +36,18 @@ var simulator = {
         $("#modal-input-language input[type='radio']").on("change", this.handleLangChange);
         $("#modal-input-grind").on("change", this.handleGrindChange);
         $("#modal-input-next").on("change", this.handleNextChange);
-        $("#modal-wrapper-material-extra").on("change", this.handleSelectionChange);
+        $("#modal-input-cost").on("change", this.handleCostChange);
+        $(".modal-wrapper-material-extra").on("change", this.handleSelectionChange);
     },
 
     createListenEvent: function(){
         $("body").on("click", "#btn-edit-base", this.clickEditButton);
+        $("body").on("click", "#btn-add-to-list", this.handleBaseToList);
         // $("body").on("click", "#btn-edit-material", this.clickMaterialButton);
         $("body").on("click", "#material-tool-add", this.clickAddMaterialListButton);
         $("body").on("click", "#queue-tool-add", this.clickAddMaterialButton);
+        $("body").on("click", "#nav-save", this.data.saveLocalStorage);
+        $("body").on("click", "#nav-load", this.data.loadLocalStorage);
         // $("body").on("click", "#btn-add-material-list", this.clickMaterialListButton);
         // $("body").on("click", ".container-queue", this.handleQueueSelection);
     },
@@ -57,6 +61,7 @@ var simulator = {
                 self.materialQueue[group].data[index].withEmpr==undefined?self.materialQueue[group].data[index].withEmpr=false:{};
                 self.materialQueue[group].data[index].withPoli==undefined?self.materialQueue[group].data[index].withPoli=false:{};
                 self.materialQueue[group].data[index].sameSet==undefined?self.materialQueue[group].data[index].sameSet=0:{};
+                self.materialQueue[group].data[index].cost==undefined?self.materialQueue[group].data[index].cost=0:{};
             }
         }
         for (index in self.materialList){
@@ -65,6 +70,7 @@ var simulator = {
             self.materialList[index].withEmpr==undefined?self.materialList[index].withEmpr=false:{};
             self.materialList[index].withPoli==undefined?self.materialList[index].withPoli=false:{};
             self.materialList[index].sameSet==undefined?self.materialList[index].sameSet=0:{};
+            self.materialList[index].cost==undefined?self.materialList[index].cost=0:{};
         }
     },
 
@@ -86,7 +92,6 @@ var simulator = {
                         queue: simulator.data.queueInfo,
                         options: {animation: 150, group:'material', pull:'clone'},
                         draglist: simulator.data.dragData,
-                        duplist: simulator.data.duplicateData,
                         selectedqueue: {data: '', group:null, index:null},
                         material: simulator.data.materialAttention}
                 },
@@ -134,9 +139,6 @@ var simulator = {
                     } else if (grp!==null && index===null){
                         simulator.handleDuplicateGroup(simulator.data.materialQueue[grp])
                     }
-                    // this.selectedqueue.data = '';
-                    // this.selectedqueue.group = null;
-                    // this.selectedqueue.index = null;
                     simulator.handleBaseUpdate("baseWeapon")
                 },
                 toggleBS: function(){
@@ -156,12 +158,14 @@ var simulator = {
                         this.selectedqueue.data = item;
                         this.selectedqueue.group = grp;
                         this.selectedqueue.index = index;
-                        // console.log(item,grp,index)
                     } else {
                         this.selectedqueue.data = '';
                         this.selectedqueue.group = null;
                         this.selectedqueue.index = null
                     }
+                },
+                deleteAll: function(){
+                    simulator.data.queueClear()
                 }
             }
         })
@@ -217,11 +221,13 @@ var simulator = {
                     if (this.selectedmaterial.data != item) {
                         this.selectedmaterial.data = item;
                         this.selectedmaterial.index = index;
-                        console.log(this.selectedmaterial)
                     } else {
                         this.selectedmaterial.data = '';
                         this.selectedmaterial.index = null
                     }
+                },
+                deleteAll: function(){
+                    simulator.data.listClear()
                 }
             }
         })
@@ -237,10 +243,10 @@ var simulator = {
 
     clickSaveButton: function () {
         var self =  simulator.data;
-        var queueList = ["name", "rarity", "grind", "baseExp", "sameSet", "withEmpr", "withPoli"];
+        var queueList = ["name", "rarity", "grind", "baseExp", "sameSet", "cost", "withEmpr", "withPoli"];
         var baseExclude = ["sameSet", "withEmpr", "withPoli"];
         var queueOption = ["materialQueue", "materialList", "addMaterialToQueue", "addMaterialToList"];
-        self.editorData["baseExp"] = parseInt(self.editorData["baseExp"]);      // 不知道为什么变成 String，很神奇
+        self.editorData["baseExp"] = parseInt(self.editorData["baseExp"]);
         for (index in self.editorData) {
             if (self.editorSource.editType === "baseWeapon"){
                 if (baseExclude.indexOf(index) === -1) {
@@ -308,9 +314,9 @@ var simulator = {
     updateEditType: function(editObject, editType){
         simulator.data.editorSource.sourceObject = editObject;
         simulator.data.editorSource.editType = editType;
-        $("#modal-wrapper-material-extra").hide();
+        $(".modal-wrapper-material-extra").hide();
         if (editType !== "baseWeapon"){
-            $("#modal-wrapper-material-extra").show()
+            $(".modal-wrapper-material-extra").show()
         }
     },
 
@@ -344,7 +350,7 @@ var simulator = {
     },
 
     handleEditorSelection: function(){
-        $("#modal-wrapper-material-extra label").removeClass("active");
+        $(".modal-wrapper-material-extra label").removeClass("active");
         $("#modal-input-sameset input:radio[value=" + simulator.data.editorData.sameSet + "]").prop("checked", true);
         $("#modal-input-sameset input:radio[value=" + simulator.data.editorData.sameSet + "]").parent().addClass("active");
         simulator.data.editorData.withEmpr? function(){$("#modal-input-withempr").prop("checked",true);
@@ -384,6 +390,12 @@ var simulator = {
         } else{
             data.baseExp = data.expTable()[data.grind+1] - data.nextLv;
         }
+    },
+
+    handleCostChange: function(){
+        var data = simulator.data.editorData;
+        data.cost = isNaN(parseInt(data.cost))?0:parseInt(data.cost);  // 防止手贱的人输入小数点和非数字
+        data.cost = data.cost<0?0:data.cost;
         simulator.handleBaseChange()
     },
 
@@ -486,8 +498,9 @@ var simulator = {
         }
     },
 
-    handleQueueSelection: function(){
-        $(this).toggleClass("selected")
+    handleBaseToList: function(){
+        var self = simulator.data;
+        simulator.handleAddMaterialList(Object.assign({}, self.baseWeapon))
     },
 
     handleCloseModal: function(){
@@ -507,11 +520,25 @@ BlankData = function(){
     this.grind = 0;
     this.baseExp = 0;
     this.nextLv = 5;
+    this.cost = 0;
     this.rule = function(){ return simulator.data.weaponRarity.getData(this.rarity)};
     this.expTable =  function(){ return simulator.data.expTable.getData(this.rarity)};
     this.sameSet = 0;   // 0 for off, 1 for same category, 2 for same weapon.
     this.withEmpr = false;
     this.withPoli = false;
+    this.expAsMaterial = function(){ return simulator.data.getEditorExp()}
+};
+
+BaseWeapon = function(){
+    this.name= "(´・ω・｀)",
+    this.rarity= "r13",
+    this.grind= 0,
+    this.baseExp= 0,
+    this.nextLv= 160,
+    this.materialExp= function(){ var self = simulator.data; return self.getMaterialExp()},
+    this.totalExp= function(){var exp=this.baseExp + this.materialExp(); return exp>this.expTable()[35]?this.expTable()[35]:exp },
+    this.rule= function(){ return simulator.data.weaponRarity.getData(this.rarity)},
+    this.expTable= function(){ return simulator.data.expTable.getData(this.rarity)}
 };
 
 simulator.data = {
@@ -549,7 +576,6 @@ simulator.data = {
     },
     addData: new BlankData(),
     dragData: [],
-    duplicateData: [],
 
     getMaterialExp: function(){
         var baseWeaponExp = this.baseWeapon.baseExp;
@@ -558,7 +584,7 @@ simulator.data = {
         for (index in this.baseWeapon.expTable()){
             index = parseInt(index);
             if (this.baseWeapon.baseExp < this.baseWeapon.expTable()[index]) { break }
-            if (lvLimit.indexOf(index)!= -1) { lvLimit.shift() }
+            if (lvLimit.indexOf(index)!= -1 || lvLimit.indexOf(index+1)!= -1) { lvLimit.shift() }
         }
         for(group in this.materialQueue) {
             var sectionResult = 0;
@@ -598,8 +624,32 @@ simulator.data = {
         return expResult
     },
 
-    calculateBonus: function(){
+    getMaterialMeseta: function(){
+        var cost = 0;
+        for (group in this.materialQueue){
+            for (index in this.materialQueue[group].data){
+                cost += this.materialQueue[group].data[index].rule().cost.meseta;
+                cost += this.materialQueue[group].data[index].cost!==undefined?this.materialQueue[group].data[index].cost:0;
+            }
+        }
+        return cost
+    },
 
+    getEditorExp: function(){
+        var data = simulator.data.editorData;
+        var result = 0;
+        result += data.rule().basicExp;
+        result += parseInt(data.baseExp/2);
+        result += data.withEmpr?90:0;
+        result += data.withPoli?25:0;
+        if (data.sameSet == 1){
+            result += 5
+        } else if (data.sameSet == 2){
+            data.rarity==simulator.data.baseWeapon.rarity?result+=data.rule().sameWeapon:{}
+        } else{
+            data.rarity==simulator.data.baseWeapon.rarity?result+=data.rule().sameRarity:{}
+        }
+        return result;
     },
 
     queueInfo: {
@@ -610,7 +660,8 @@ simulator.data = {
                 count += self.materialQueue[groups].data.length
             }
             return count}()},
-        queueGrind: function(){ var self = simulator.data; return self.materialQueue.length}
+        queueGrind: function(){ var self = simulator.data; return self.materialQueue.length},
+        queueCost: function(){ var self = simulator.data; return self.getMaterialMeseta()}
     },
 
     baseWeapon: {
@@ -632,9 +683,70 @@ simulator.data = {
         grind : 0,
         baseExp : 0,
         nextLv : 5,
+        cost: 0,
         sameSet : 0,
         withEmpr : false,
         withPoli : false
+    },
+
+    queueClear: function(){
+        var self = simulator.data;
+        while (self.materialQueue.length>0){
+            self.materialQueue.pop()
+        }
+    },
+
+    listClear: function(){
+        var self = simulator.data;
+        while (self.materialList.length>0){
+            self.materialList.pop()
+        }
+    },
+
+    saveLocalStorage: function(){
+        var self = simulator.data;
+        localStorage.clear();
+        localStorage.setItem('materialQueue', JSON.stringify(self.materialQueue));
+        localStorage.setItem('baseWeapon', JSON.stringify(self.baseWeapon));
+        localStorage.setItem('materialList', JSON.stringify(self.materialList));
+    },
+
+    loadLocalStorage: function(){
+        var self = simulator.data;
+        var loadedQueue = JSON.parse(localStorage.getItem('materialQueue'));
+        if (loadedQueue !== null){
+            self.queueClear();
+            for (group in loadedQueue){
+                var savedata = {bigSuccess: loadedQueue[group].bigSuccess, data: []};
+                for (index in loadedQueue[group].data){
+                    var objectQueue = new BlankData();
+                    for (item in loadedQueue[group].data[index]){
+                        objectQueue[item] = loadedQueue[group].data[index][item]
+                    }
+                    savedata.data.push(objectQueue)
+                }
+                self.materialQueue.push(savedata)
+            }
+        }
+
+        var loadedBase = JSON.parse(localStorage.getItem('baseWeapon'));
+        if (loadedBase !== null){
+            var setBase = new BaseWeapon();
+            for (index in setBase){
+                self.baseWeapon[index] = loadedBase[index]==undefined?setBase[index]:loadedBase[index]
+            }
+        }
+        var loadedList = JSON.parse(localStorage.getItem('materialList'));
+        if (loadedList !== null){
+            self.listClear();
+            for (group in loadedList){
+                var objectList = new BlankData();
+                for (index in loadedList[group]){
+                    objectList[index] = loadedList[group][index]
+                }
+                self.materialList.push(objectList)
+            }
+        }
     },
 
     materialAttention: {

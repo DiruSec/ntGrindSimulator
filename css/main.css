@@ -81,7 +81,8 @@ hr{
     display: inherit;
 }
 
-.panel-weapon dl button{
+.panel-weapon .base-wrapper-btn{
+    display: flex;
     position: absolute;
     bottom: 0;
 }
@@ -164,7 +165,7 @@ hr{
 }
 
 .queue-material-info span{
-    margin-left: 10%;
+    margin-left: 5%;
 }
 
 .queue-tool-set{
@@ -366,7 +367,7 @@ hr{
     margin-bottom: 0;
 }
 
-#modal-wrapper-material-extra{
+.modal-wrapper-material-extra{
     display: none;
 }
 
@@ -382,6 +383,18 @@ hr{
 }
 #modal-input-sameset-wrapper span{
     font-size: .8rem
+}
+
+#editModal .modal-footer>:not(:last-child) {
+    margin-right: auto;
+}
+
+#editModal .modal-footer .input-group{
+    margin:0;
+}
+
+#editModal .modal-footer input{
+    text-align: right;
 }
 
 
