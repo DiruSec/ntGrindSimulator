@@ -1,336 +1,340 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-<meta name="description" content="">
-<title>NT Weapon Grind Simulator</title>
-<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
-<link rel="stylesheet" href="css/main.css" charset="utf-8" />
-<link rel="stylesheet" href="css/iconic/open-iconic-bootstrap.css">
-<!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>-->
-<!--<script src="https://unpkg.com/vue"></script>-->
-<script type="text/javascript" src="js/vue/vue.js"></script>
-<script type="text/javascript" src="js/bootstrap/popper.min.js"></script>
-<script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
-<script type="text/javascript" src="js/jquery/jquery.i18n.min.js"></script>
-<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/sortable/Sortable.min.js"></script>
-<script type="text/javascript" src="js/sortable/vuedraggable.min.js"></script>
-<script type="text/javascript" src="js/main.js" charset="utf-8"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="">
+    <title>NT Weapon Grind Simulator</title>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
+    <link rel="stylesheet" href="css/main.css" charset="utf-8" />
+    <link rel="stylesheet" href="css/iconic/open-iconic-bootstrap.css">
+    <!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>-->
+    <!--<script src="https://unpkg.com/vue"></script>-->
+    <!--[if IE]>
+    <script type="text/javascript" src="js/babel/babel.min.js"></script>
+    <script type="text/javascript" src="js/babel/polyfill.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/vue/vue.js"></script>
+    <script type="text/javascript" src="js/bootstrap/popper.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.i18n.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/sortable/Sortable.min.js"></script>
+    <script type="text/javascript" src="js/sortable/vuedraggable.min.js"></script>
+    <script type="text/javascript" src="js/main.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="wrapper">
-<nav class="navbar navbar-light bg-light">
-	<span i18n="nav-title" class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
-	<ul class="nav justify-content-end">
-        <li class="nav-item">
-            <a i18n="nav-load" class="nav-link" href="#" id="nav-load"> Load </a>
-        </li>
-        <li class="nav-item">
-            <a i18n="nav-save" class="nav-link" href="#" id="nav-save"> Save </a>
-        </li>
-        <li class="nav-item">
-            <a i18n="nav-settings" class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
-        </li>
-		<li class="nav-item">
-			<a i18n="nav-help" class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
-		</li>
-		<li class="nav-item">
-			<a i18n="nav-about" class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
-		</li>
-	</ul>
-</nav>
-
-<div class="left-wrapper">
-<div class="area-content area-base">
-	<span i18n="title-base" class="h4 text-muted ml-2">Base Weapon</span>
-	<hr/>
-	<div class="panel-weapon" id="panel-weapon">
-		<div class="img-wrapper">
-            <div class="img-weapon-thumb">
-                <p> {{rule().name}} </p>
-            </div>
-		</div>
-		<dl>
-			<dt class="">{{name}}</dt>
-			<dt i18n="base-baseexp" class="base-text-baseexp">Base EXP:</dt>
-            <dd>{{baseExp}}</dd>
-			<!--<dt class="">Grind: {{grind}}</dt>-->
-            <dt class="base-wrapper-btn">
-                <button i18n="base-editbtn" type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base</button>
-                <button i18n="base-addbtn" type="button" class="btn btn-primary btn-sm" id="btn-add-to-list">Add to material</button>
-            </dt>
-		</dl>
-        <div class="progress-text clearfix">
-            <span i18n="base-level" class="ml-2">Grind Level</span>
-            <span class="text-muted mr-2 float-right">{{grind}}</span>
-        </div>
-        <div class="progress" style="height: .5em">
-            <div class="progress-bar bg-primary" role="progressbar" :style="{width: (grind/35)*100 + '%'}"></div>
-        </div>
-		<div class="progress-text clearfix">
-			<span i18n="base-tonext" class="ml-2">To Next Level</span>
-			<span class="text-muted mr-2 float-right">{{nextLv}}</span>
-		</div>
-		<div class="progress" style="height: .5em">
-			<div class="progress-bar bg-success" role="progressbar" :style="{width: 100-(nextLv/(expTable()[grind+1]-expTable()[grind])*100) + '%'}"></div>
-		</div>
-		<div class="progress-text clearfix">
-			<span i18n="base-total" class="ml-2">Total EXP</span>
-			<span class="text-muted mr-2 float-right">{{ totalExp() }} / {{expTable()[35]}}</span>
-		</div>
-		<div class="progress" style="height: .5em">
-            <!--<div class="progress-bar bg-info" role="progressbar" :style="{width: baseExp/expTable()[35]*100 + '%'}"></div>-->
-            <!--<div class="progress-bar bg-warning" role="progressbar" :style="{width: materialExp()/expTable()[35]*100 + '%'}"></div>-->
-			<div class="progress-bar bg-info" role="progressbar" :style="{width: totalExp()/expTable()[35]*100 + '%'}"></div>
-		</div>
-	</div>
-</div>
-
-<div class="area-content area-queue">
-	<span i18n="title-queue" class="h4 text-muted ml-2">Material Queue</span>
-	<hr/>
-	<ul class="queue-material-info">
-        <li i18n="queue-materialexp">Material EXP: </li><span>{{queue.queueExp()}}</span>
-        <li i18n="queue-materialcount">Material Count: </li><span>{{queue.queueCount()}}</span>
-        <li i18n="queue-grindcount">Grind Count: </li><span>{{queue.queueGrind()}}</span>
-        <li i18n="cost-meseta" >Meseta Cost: </li><span>{{queue.queueCost().toLocaleString()}}</span>
-	</ul>
-    <!--<ul class="queue-material-overflow" style="color: red">-->
-        <!--<li i18n="queue-overflowed">Overflowed EXP: </li>-->
-        <!--<span :style="">Lv.10</span>-->
-        <!--<span :style="">Lv.20</span>-->
-        <!--<span :style="">Lv.30</span>-->
-        <!--<span :style="">Lv.35</span>-->
-    <!--</ul>-->
-        <ul id="queue-tool-indicator" :style="{display: material.data.sameWeaponNotMatch.happened?'inherit':'none'}">
-        <span class="oi oi-warning" style="color: darkorange" ></span>
-        <p i18n="queue-same-not-match">A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.</p>
+    <nav class="navbar navbar-light bg-light">
+        <span i18n="nav-title" class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
+        <ul class="nav justify-content-end">
+            <li class="nav-item">
+                <a i18n="nav-load" class="nav-link" href="#" id="nav-load"> Load </a>
+            </li>
+            <li class="nav-item">
+                <a i18n="nav-save" class="nav-link" href="#" id="nav-save"> Save </a>
+            </li>
+            <li class="nav-item">
+                <a i18n="nav-settings" class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
+            </li>
+            <li class="nav-item">
+                <a i18n="nav-help" class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
+            </li>
+            <li class="nav-item">
+                <a i18n="nav-about" class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
+            </li>
         </ul>
-	<ul class="queue-tool-set">
-        <div>
-		<span class="oi oi-trash" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-delete" @click="del"></span>
-		<span class="oi oi-clipboard" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-duplicate" @click="duplicate"></span>
-		<span class="oi oi-beaker" :style="{display: ((selectedqueue.group!==null&&selectedqueue.index===null)?'inline':'none')}" id="queue-tool-bigsuccess" @click="toggleBS"></span>
-		<span class="oi oi-pencil" :style="{display: (selectedqueue.index!==null?'inline':'none')}" id="queue-tool-edit" @click="edit"></span>
-        <span class="oi oi-trash" style="color: red" :style="{display: (selectedqueue.data.length!=''?'none':'inline')}" id="queue-tool-deleteAll" @click="deleteAll"></span>
-		<span class="oi oi-plus" id="queue-tool-add" data-toggle="modal" data-target="#editModal"></span>
-		</div>
-	</ul>
-	<div class="panel-queue" id="panel-material-list">
-		<draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @end="dragFinish">
-		<div class="container-fluid container-queue" :class="{selected: selectedqueue.data == items}" v-for="items,group in groups" @click="selected(items,group,null)">
-            <span class="oi oi-beaker" id="indicate-bigsuccess" :style="{display: items.bigSuccess==true?'inline':'none'}"></span>
-            <div id="indicate-overflowed" :style="{display: material.checkPos(group)[0]==true?'inline':'none'}">
-                <span class="oi oi-warning"></span>
-                <p i18n="queue-overflowed">過剰EXP: </p>
-                <p><strong>{{material.checkPos(group)[1]}}</strong></p>
-            </div>
-			<draggable :list="items.data" @end="dragFinish" :options="options" :move="checkLength">
-            <div class="img-wrapper-small" :class="{selected: selectedqueue.data == item}" @click.stop="selected(item,group,index)" v-for="item,index in items.data">
-                <div class="img-weapon-thumb-small">
-                    <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
-                    <p>{{item.rule().name}}/+{{item.grind}}</p>
-                </div>
-				<p class="weapon-thumb-name">{{ item.name }}</p>
-            </div>
-			</draggable>
-		</div>
-		</draggable>
-        <div id="add-material-space">
-            <draggable :list="draglist" :options="{group: 'material'}"></draggable>
-        </div>
-	</div>
-</div>
-	<!--<div class="area-content area-cost">-->
-		<!--<span i18n="title-cost" class="h4 text-muted ml-2">Item Cost</span>-->
-		<!--<hr/>-->
-		<!--<ul class="clearfix">-->
-			<!--<li i18n="cost-meseta" >Meseta Cost: </li>-->
-            <!--<span class="float-right">1,960,080</span>-->
-			<!--<li i18n="cost-grinder" >Grinder Cost: <span class="float-right">220</span></li>-->
-			<!--<li i18n="cost-lamgrinder" >Lambda Grinder Cost: <span class="float-right">20</span></li>-->
-			<!--<li i18n="cost-greatsuccess" >Grind Great-Success (100%): <span class="float-right">3</span></li>-->
-			<!--<li i18n="cost-empr" >Empe Embrace: <span class="float-right">2</span></li>-->
-			<!--<li i18n="cost-ntboost" >NT Weapon Boost: <span class="float-right">3</span></li>-->
-		<!--</ul>-->
-	<!--</div>-->
+    </nav>
 
-</div>
-
-<div class="right-wrapper">
-	<div class="area-content area-material">
-	<span i18n="title-list" class="h4 text-muted ml-2">Material List</span>
-	<hr/>
-    <ul class="material-tool-set">
-        <div>
-            <span class="oi oi-trash" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-delete" @click="del"></span>
-            <span class="oi oi-clipboard" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-duplicate" @click="duplicate"></span>
-            <span class="oi oi-pencil" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-edit" @click="edit"></span>
-            <span class="oi oi-trash" style="color: red" :style="{display: (selectedmaterial.index!=null?'none':'inline')}" id="material-tool-deleteAll" @click="deleteAll"></span>
-            <span class="oi oi-plus" id="material-tool-add" data-toggle="modal" data-target="#editModal"></span>
-        </div>
-    </ul>
-	<div class="container-fluid container-list" id="container-list" style="width: 100%">
-        <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options" :clone="clone">
-        <div class="img-wrapper-small" v-for="item,index in items" :class="{selected: selectedmaterial.data == item}" @click="selected(item,index)">
-            <div class="img-weapon-thumb-small">
-                <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
-                <p>{{item.rule().name}}/+{{item.grind}}</p>
-            </div>
-			<p class="weapon-thumb-name">{{ item.name }}</p>
-        </div>
-        </draggable>
-		</div>
-	</div>
-</div>
-<div class="modal-wrapper">
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 i18n="title-modal-about" class="modal-title">About</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <div class="left-wrapper">
+        <div class="area-content area-base">
+            <span i18n="title-base" class="h4 text-muted ml-2">Base Weapon</span>
+            <hr/>
+            <div class="panel-weapon" id="panel-weapon">
+                <div class="img-wrapper">
+                    <div class="img-weapon-thumb">
+                        <p> {{rule().name}} </p>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <dl>
-                        <dt>Simulator Version</dt><dd>0.1.0</dd>
-                    </dl>
-                    <dl>
-                        <dt>Calculator Version</dt><dd>Under development</dd>
-                    </dl>
-                    <dl>
-                        <dt>Developer</dt><dd>DiruSec</dd>
-                    </dl>
+                <dl>
+                    <dt class="">{{name}}</dt>
+                    <dt i18n="base-baseexp" class="base-text-baseexp">Base EXP:</dt>
+                    <dd>{{baseExp}}</dd>
+                    <!--<dt class="">Grind: {{grind}}</dt>-->
+                    <dt class="base-wrapper-btn">
+                        <button i18n="base-editbtn" type="button" class="btn btn-primary btn-sm" id="btn-edit-base" data-toggle="modal" data-target="#editModal">Edit Base</button>
+                        <button i18n="base-addbtn" type="button" class="btn btn-primary btn-sm" id="btn-add-to-list">Add to material</button>
+                    </dt>
+                </dl>
+                <div class="progress-text clearfix">
+                    <span i18n="base-level" class="ml-2">Grind Level</span>
+                    <span class="text-muted mr-2 float-right">{{grind}}</span>
+                </div>
+                <div class="progress" style="height: .5em">
+                    <div class="progress-bar bg-primary" role="progressbar" :style="{width: (grind/35)*100 + '%'}"></div>
+                </div>
+                <div class="progress-text clearfix">
+                    <span i18n="base-tonext" class="ml-2">To Next Level</span>
+                    <span class="text-muted mr-2 float-right">{{nextLv}}</span>
+                </div>
+                <div class="progress" style="height: .5em">
+                    <div class="progress-bar bg-success" role="progressbar" :style="{width: 100-(nextLv/(expTable()[grind+1]-expTable()[grind])*100) + '%'}"></div>
+                </div>
+                <div class="progress-text clearfix">
+                    <span i18n="base-total" class="ml-2">Total EXP</span>
+                    <span class="text-muted mr-2 float-right">{{ totalExp() }} / {{expTable()[35]}}</span>
+                </div>
+                <div class="progress" style="height: .5em">
+                    <!--<div class="progress-bar bg-info" role="progressbar" :style="{width: baseExp/expTable()[35]*100 + '%'}"></div>-->
+                    <!--<div class="progress-bar bg-warning" role="progressbar" :style="{width: materialExp()/expTable()[35]*100 + '%'}"></div>-->
+                    <div class="progress-bar bg-info" role="progressbar" :style="{width: totalExp()/expTable()[35]*100 + '%'}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="area-content area-queue">
+            <span i18n="title-queue" class="h4 text-muted ml-2">Material Queue</span>
+            <hr/>
+            <ul class="queue-material-info">
+                <li i18n="queue-materialexp">Material EXP: </li><span>{{queue.queueExp()}}</span>
+                <li i18n="queue-materialcount">Material Count: </li><span>{{queue.queueCount()}}</span>
+                <li i18n="queue-grindcount">Grind Count: </li><span>{{queue.queueGrind()}}</span>
+                <li i18n="cost-meseta" >Meseta Cost: </li><span>{{queue.queueCost().toLocaleString()}}</span>
+            </ul>
+            <!--<ul class="queue-material-overflow" style="color: red">-->
+            <!--<li i18n="queue-overflowed">Overflowed EXP: </li>-->
+            <!--<span :style="">Lv.10</span>-->
+            <!--<span :style="">Lv.20</span>-->
+            <!--<span :style="">Lv.30</span>-->
+            <!--<span :style="">Lv.35</span>-->
+            <!--</ul>-->
+            <ul id="queue-tool-indicator" :style="{display: material.data.sameWeaponNotMatch.happened?'inherit':'none'}">
+                <span class="oi oi-warning" style="color: darkorange" ></span>
+                <p i18n="queue-same-not-match">A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.</p>
+            </ul>
+            <ul class="queue-tool-set">
+                <div>
+                    <span class="oi oi-trash" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-delete" @click="del"></span>
+                    <span class="oi oi-clipboard" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-duplicate" @click="duplicate"></span>
+                    <span class="oi oi-beaker" :style="{display: ((selectedqueue.group!==null&&selectedqueue.index===null)?'inline':'none')}" id="queue-tool-bigsuccess" @click="toggleBS"></span>
+                    <span class="oi oi-pencil" :style="{display: (selectedqueue.index!==null?'inline':'none')}" id="queue-tool-edit" @click="edit"></span>
+                    <span class="oi oi-trash" style="color: red" :style="{display: (selectedqueue.data.length!=''?'none':'inline')}" id="queue-tool-deleteAll" @click="deleteAll"></span>
+                    <span class="oi oi-plus" id="queue-tool-add" data-toggle="modal" data-target="#editModal"></span>
+                </div>
+            </ul>
+            <div class="panel-queue" id="panel-material-list">
+                <draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @end="dragFinish">
+                    <div class="container-fluid container-queue" :class="{selected: selectedqueue.data == items}" v-for="items,group in groups" @click="selected(items,group,null)">
+                        <span class="oi oi-beaker" id="indicate-bigsuccess" :style="{display: items.bigSuccess==true?'inline':'none'}"></span>
+                        <div id="indicate-overflowed" :style="{display: material.checkPos(group)[0]==true?'inline':'none'}">
+                            <span class="oi oi-warning"></span>
+                            <p i18n="queue-overflowed">過剰EXP: </p>
+                            <p><strong>{{material.checkPos(group)[1]}}</strong></p>
+                        </div>
+                        <draggable :list="items.data" @end="dragFinish" :options="options" :move="checkLength">
+                            <div class="img-wrapper-small" :class="{selected: selectedqueue.data == item}" @click.stop="selected(item,group,index)" v-for="item,index in items.data">
+                                <div class="img-weapon-thumb-small">
+                                    <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
+                                    <p>{{item.rule().name}}/+{{item.grind}}</p>
+                                </div>
+                                <p class="weapon-thumb-name">{{ item.name }}</p>
+                            </div>
+                        </draggable>
+                    </div>
+                </draggable>
+                <div id="add-material-space">
+                    <draggable :list="draglist" :options="{group: 'material'}"></draggable>
+                </div>
+            </div>
+        </div>
+        <!--<div class="area-content area-cost">-->
+        <!--<span i18n="title-cost" class="h4 text-muted ml-2">Item Cost</span>-->
+        <!--<hr/>-->
+        <!--<ul class="clearfix">-->
+        <!--<li i18n="cost-meseta" >Meseta Cost: </li>-->
+        <!--<span class="float-right">1,960,080</span>-->
+        <!--<li i18n="cost-grinder" >Grinder Cost: <span class="float-right">220</span></li>-->
+        <!--<li i18n="cost-lamgrinder" >Lambda Grinder Cost: <span class="float-right">20</span></li>-->
+        <!--<li i18n="cost-greatsuccess" >Grind Great-Success (100%): <span class="float-right">3</span></li>-->
+        <!--<li i18n="cost-empr" >Empe Embrace: <span class="float-right">2</span></li>-->
+        <!--<li i18n="cost-ntboost" >NT Weapon Boost: <span class="float-right">3</span></li>-->
+        <!--</ul>-->
+        <!--</div>-->
+
+    </div>
+
+    <div class="right-wrapper">
+        <div class="area-content area-material">
+            <span i18n="title-list" class="h4 text-muted ml-2">Material List</span>
+            <hr/>
+            <ul class="material-tool-set">
+                <div>
+                    <span class="oi oi-trash" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-delete" @click="del"></span>
+                    <span class="oi oi-clipboard" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-duplicate" @click="duplicate"></span>
+                    <span class="oi oi-pencil" :style="{display: (selectedmaterial.index!=null?'inline':'none')}" id="material-tool-edit" @click="edit"></span>
+                    <span class="oi oi-trash" style="color: red" :style="{display: (selectedmaterial.index!=null?'none':'inline')}" id="material-tool-deleteAll" @click="deleteAll"></span>
+                    <span class="oi oi-plus" id="material-tool-add" data-toggle="modal" data-target="#editModal"></span>
+                </div>
+            </ul>
+            <div class="container-fluid container-list" id="container-list" style="width: 100%">
+                <draggable :list="items" :move="checkLength" @start="dragStart" @end="dragFinish" :options="options" :clone="clone">
+                    <div class="img-wrapper-small" v-for="item,index in items" :class="{selected: selectedmaterial.data == item}" @click="selected(item,index)">
+                        <div class="img-weapon-thumb-small">
+                            <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
+                            <p>{{item.rule().name}}/+{{item.grind}}</p>
+                        </div>
+                        <p class="weapon-thumb-name">{{ item.name }}</p>
+                    </div>
+                </draggable>
+            </div>
+        </div>
+    </div>
+    <div class="modal-wrapper">
+        <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 i18n="title-modal-about" class="modal-title">About</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <dl>
+                            <dt>Simulator Version</dt><dd>0.1.0</dd>
+                        </dl>
+                        <dl>
+                            <dt>Calculator Version</dt><dd>Under development</dd>
+                        </dl>
+                        <dl>
+                            <dt>Developer</dt><dd>DiruSec</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 i18n="title-modal-edit" class="modal-title" >Edit Parameters</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="element-edit input-group">
+                            <span i18n="modal-weapon-name" class="input-group-addon">Name</span>
+                            <input type="text" class="form-control" id="modal-input-name" v-model="name">
+                        </div>
+                        <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-rarity">
+                            <label class="btn btn-success">
+                                <input type="radio" name="group-rarity" value="r123"> ★1-3
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="group-rarity" value="r456"> ★4-6
+                            </label>
+                            <label class="btn btn-danger">
+                                <input type="radio" name="group-rarity" value="r789"> ★7-9
+                            </label>
+                            <label class="btn btn-warning">
+                                <input type="radio" name="group-rarity" value="r10"> ★10
+                            </label>
+                            <label class="btn btn-warning">
+                                <input type="radio" name="group-rarity" value="r11"> ★11
+                            </label>
+                            <label class="btn btn-warning">
+                                <input type="radio" name="group-rarity" value="r12"> ★12
+                            </label>
+                            <label class="btn btn-info">
+                                <input type="radio" name="group-rarity" value="r13"> ★13
+                            </label>
+                            <label class="btn btn-info">
+                                <input type="radio" name="group-rarity" value="r14"> ★14
+                            </label>
+                        </div>
+                        <div class="element-edit input-group">
+                            <span i18n="modal-grindlv" class="input-group-addon">Grind Level</span>
+                            <input type="number" class="form-control" id="modal-input-grind" v-model="grind">
+                        </div>
+                        <div class="element-edit input-group">
+                            <span i18n="modal-nextlv" class="input-group-addon">Next Level</span>
+                            <input type="number" class="form-control" id="modal-input-next" v-model="nextLv">
+                        </div>
+                        <div class="element-edit input-group">
+                            <span i18n="modal-baseexp" class="input-group-addon">Base Exp</span>
+                            <input type="number" class="form-control" id="modal-input-total" v-model="baseExp">
+                        </div>
+                        <div class="modal-wrapper-material-extra">
+                            <div class="element-edit input-group">
+                                <span i18n="modal-materialCost" class="input-group-addon">Cost</span>
+                                <input type="number" class="form-control" id="modal-input-cost" v-model="cost">
+                            </div>
+                            <div class="element-edit btn-group" data-toggle="buttons">
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="modal-input-withempr"> <p i18n="modal-emb" class="label-for-btn">Empe Embrace</p>
+                                </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="modal-input-withpoli"> <p i18n="modal-poli" class="label-for-btn">Politan Smile</p>
+                                </label>
+                            </div>
+                            <div id="modal-input-sameset-wrapper">
+                                <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-sameset">
+                                    <label class="btn btn-info active">
+                                        <input  type="radio" name="group-same" value="0"> <p i18n="modal-nosame" class="label-for-btn">Off</p>
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input  type="radio" name="group-same" value="1"> <p i18n="modal-samecate" class="label-for-btn">Same Category</p>
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input type="radio" name="group-same" value="2"> <p i18n="modal-sameweapon" class="label-for-btn">Same Weapon</p>
+                                    </label>
+                                </div>
+                                <span i18n="modal-hint-samerare" class="text-muted">Same Rarity will be auto recognized.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="modal-wrapper-material-extra">
+                            <div class="element-edit input-group">
+                                <span i18n="modal-materialExp" class="input-group-addon">EXP</span>
+                                <input class="form-control" v-model="expAsMaterial()" disabled>
+                            </div>
+                        </div>
+                        <div>
+                            <button i18n="modal-savebtn" type="button" class="btn btn-primary" id="btn-edit-save">Save changes</button>
+                            <button i18n="modal-cancelbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 i18n="title-modal-settings" class="modal-title">Settings</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-language">
+                            <label class="btn btn-info active">
+                                <input type="radio" name="group-same" value="en"> en
+                            </label>
+                            <label class="btn btn-info">
+                                <input type="radio" name="group-same" value="zh-CN"> cn
+                            </label>
+                            <label class="btn btn-info">
+                                <input type="radio" name="group-same" value="jp"> jp
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-	<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 i18n="title-modal-edit" class="modal-title" >Edit Parameters</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="element-edit input-group">
-						<span i18n="modal-weapon-name" class="input-group-addon">Name</span>
-						<input type="text" class="form-control" id="modal-input-name" v-model="name">
-					</div>
-					<div class="element-edit btn-group" data-toggle="buttons" id="modal-input-rarity">
-						<label class="btn btn-success">
-							<input type="radio" name="group-rarity" value="r123"> ★1-3
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="group-rarity" value="r456"> ★4-6
-						</label>
-						<label class="btn btn-danger">
-							<input type="radio" name="group-rarity" value="r789"> ★7-9
-						</label>
-						<label class="btn btn-warning">
-							<input type="radio" name="group-rarity" value="r10"> ★10
-						</label>
-						<label class="btn btn-warning">
-							<input type="radio" name="group-rarity" value="r11"> ★11
-						</label>
-						<label class="btn btn-warning">
-							<input type="radio" name="group-rarity" value="r12"> ★12
-						</label>
-						<label class="btn btn-info">
-							<input type="radio" name="group-rarity" value="r13"> ★13
-						</label>
-						<label class="btn btn-info">
-							<input type="radio" name="group-rarity" value="r14"> ★14
-						</label>
-					</div>
-					<div class="element-edit input-group">
-						<span i18n="modal-grindlv" class="input-group-addon">Grind Level</span>
-						<input type="number" class="form-control" id="modal-input-grind" v-model="grind">
-					</div>
-					<div class="element-edit input-group">
-						<span i18n="modal-nextlv" class="input-group-addon">Next Level</span>
-						<input type="number" class="form-control" id="modal-input-next" v-model="nextLv">
-					</div>
-					<div class="element-edit input-group">
-						<span i18n="modal-baseexp" class="input-group-addon">Base Exp</span>
-						<input type="number" class="form-control" id="modal-input-total" v-model="baseExp">
-					</div>
-                    <div class="modal-wrapper-material-extra">
-                    <div class="element-edit input-group">
-                        <span i18n="modal-materialCost" class="input-group-addon">Cost</span>
-                        <input type="number" class="form-control" id="modal-input-cost" v-model="cost">
-                    </div>
-					<div class="element-edit btn-group" data-toggle="buttons">
-						<label class="btn btn-warning">
-                            <input type="checkbox" id="modal-input-withempr"> <p i18n="modal-emb" class="label-for-btn">Empe Embrace</p>
-						</label>
-						<label class="btn btn-warning">
-                            <input type="checkbox" id="modal-input-withpoli"> <p i18n="modal-poli" class="label-for-btn">Politan Smile</p>
-						</label>
-                    </div>
-                    <div id="modal-input-sameset-wrapper">
-                    <div class="element-edit btn-group" data-toggle="buttons" id="modal-input-sameset">
-                        <label class="btn btn-info active">
-                            <input  type="radio" name="group-same" value="0"> <p i18n="modal-nosame" class="label-for-btn">Off</p>
-                        </label>
-                        <label class="btn btn-info">
-                            <input  type="radio" name="group-same" value="1"> <p i18n="modal-samecate" class="label-for-btn">Same Category</p>
-                        </label>
-                        <label class="btn btn-info">
-                            <input type="radio" name="group-same" value="2"> <p i18n="modal-sameweapon" class="label-for-btn">Same Weapon</p>
-                        </label>
-					</div>
-						<span i18n="modal-hint-samerare" class="text-muted">Same Rarity will be auto recognized.</span>
-					</div>
-                    </div>
-				</div>
-				<div class="modal-footer">
-                <div class="modal-wrapper-material-extra">
-                    <div class="element-edit input-group">
-                        <span i18n="modal-materialExp" class="input-group-addon">EXP</span>
-                        <input class="form-control" v-model="expAsMaterial()" disabled>
-                    </div>
-            </div>
-                    <div>
-					<button i18n="modal-savebtn" type="button" class="btn btn-primary" id="btn-edit-save">Save changes</button>
-					<button i18n="modal-cancelbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 i18n="title-modal-settings" class="modal-title">Settings</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="element-edit btn-group" data-toggle="buttons" id="modal-input-language">
-						<label class="btn btn-info active">
-							<input type="radio" name="group-same" value="en"> en
-						</label>
-						<label class="btn btn-info">
-							<input type="radio" name="group-same" value="zh-CN"> cn
-						</label>
-						<label class="btn btn-info">
-							<input type="radio" name="group-same" value="jp"> jp
-						</label>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 </div>
 </body>
 </html>

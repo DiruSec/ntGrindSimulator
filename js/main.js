@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 }, false);
-var currentLang = navigator.language;
+var currentLang = navigator.language===undefined?'en':navigator.language;
 // 主要处理函数
 var simulator = {
     initialization: function(){
@@ -500,7 +500,9 @@ var simulator = {
 
     handleBaseToList: function(){
         var self = simulator.data;
-        simulator.handleAddMaterialList(Object.assign({}, self.baseWeapon))
+        var object = Object.assign({}, self.baseWeapon);
+        object.baseExp = self.baseWeapon.totalExp();
+        simulator.handleAddMaterialList(object)
     },
 
     handleCloseModal: function(){
@@ -846,13 +848,13 @@ simulator.data = {
         },
         {
             bigSuccess: false,
-            data :[
-                {
-                    name: "サイコウォンド",
-                    rarity: "r12",
-                    grind: 0,
-                    baseExp: 0
-                },
+        data :[
+            {
+                name: "サイコウォンド",
+                rarity: "r12",
+                grind: 0,
+                baseExp: 0
+            },
             {
                 name: "アーレスタリス",
                 rarity: "r13",
@@ -877,22 +879,23 @@ simulator.data = {
 
     materialList:[
     {
-        name: "Eternal Psycho Drive",
-        rarity: "r14",
-        grind: 0,
-        baseExp: 10
+        name: "エンペ★９",
+        rarity: "r789",
+        grind: 5,
+        baseExp: 100,
+        withEmpr: true
     },
     {
-        name: "Akatsuki",
-        rarity: "r14",
-        grind: 0,
-        baseExp: 20
+        name: "ディオ+５",
+        rarity: "r10",
+        grind: 5,
+        baseExp: 160
     },
     {
-        name: "Kazami no tachi",
-        rarity: "r14",
-        grind: 0,
-        baseExp: 30
+        name: "★13+9",
+        rarity: "r13",
+        grind: 9,
+        baseExp: 1720
     }
 ]
 };
