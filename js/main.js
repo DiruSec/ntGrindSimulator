@@ -686,7 +686,7 @@ var simulator = {
                 top: '5%',
                 'z-index': 2
             }
-        }).html('URL: <a href="'+location.origin+'/?'+text+'">' + location.origin+'/?'+text+ '</a>' +
+        }).html('URL: <a href="'+location.origin + location.pathname +'?'+text+'">' + location.pathname +'/?'+text+ '</a>' +
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span>' +
         '</button>').appendTo($("body"));
