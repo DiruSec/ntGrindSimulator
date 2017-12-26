@@ -1084,8 +1084,8 @@ simulator.data = {
             gSuccess: false,
             data: [
                 {
-                    name: "エターナルサイコドライブ",
-                    rarity: "r14",
+                    name: "(´･ω･`)",
+                    rarity: "r123",
                     grind: 0,
                     baseExp: 0,
                     sameSet: 0,
@@ -1093,28 +1093,29 @@ simulator.data = {
                     withPoli: false
                 },
                 {
-                    name: "アカツキ",
-                    rarity: "r14",
-                    grind: 0,
-                    baseExp: 0
+                    name: "らんらん",
+                    rarity: "r456",
+                    grind: 1,
+                    baseExp: 5
                 },
                 {
-                    name: "カザミのタチ",
-                    rarity: "r14",
-                    grind: 0,
-                    baseExp: 0
+                    name: "出荷",
+                    rarity: "r789",
+                    grind: 2,
+                    baseExp: 40
                 },
                 {
-                    name: "ボクラガソン",
-                    rarity: "r13",
-                    grind: 0,
-                    baseExp: 0
+                    name: "する",
+                    rarity: "r10",
+                    grind: 3,
+                    baseExp: 90
                 },
                 {
-                    name: "アモシカシティ",
-                    rarity: "r14",
-                    grind: 0,
-                    baseExp: 0
+                    name: "よー",
+                    rarity: "r789",
+                    grind: 5,
+                    baseExp: 100,
+                    withEmpr: true
                 }
             ]
         },
@@ -1122,14 +1123,14 @@ simulator.data = {
             gSuccess: false,
         data :[
             {
-                name: "サイコウォンド",
-                rarity: "r12",
+                name: "ソード",
+                rarity: "r123",
                 grind: 0,
                 baseExp: 0
             },
             {
-                name: "アーレスタリス",
-                rarity: "r13",
+                name: "ソード",
+                rarity: "r123",
                 grind: 0,
                 baseExp: 0
             },
@@ -1141,7 +1142,7 @@ simulator.data = {
             },
             {
                 name: "ニレンアギド",
-                rarity: "r11",
+                rarity: "r123",
                 grind: 0,
                 baseExp: 0
             }
