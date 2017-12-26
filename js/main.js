@@ -1141,7 +1141,7 @@ simulator.data = {
                 baseExp: 0
             },
             {
-                name: "ニレンアギド",
+                name: "ソード",
                 rarity: "r123",
                 grind: 0,
                 baseExp: 0
