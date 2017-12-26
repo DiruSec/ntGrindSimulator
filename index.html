@@ -3,17 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-    <meta name="description" content="">
-    <title>NT Weapon Grind Simulator</title>
+    <meta name="description" content="PSO2の新世武器強化用シミュレーター。簡単操作で新世武器の強化を体験することができます。">
+    <title>PSO2 NT Weapon Grind Simulator</title>
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" charset="utf-8" />
     <link rel="stylesheet" href="css/main.css" charset="utf-8" />
     <link rel="stylesheet" href="css/iconic/open-iconic-bootstrap.css">
-    <!--<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>-->
-    <!--<script src="https://unpkg.com/vue"></script>-->
-    <!--[if IE]>
-    <script type="text/javascript" src="js/babel/babel.min.js"></script>
-    <script type="text/javascript" src="js/babel/polyfill.min.js"></script>
-    <![endif]-->
+    <script src="https://cdn.polyfill.io/v2/polyfill.js"></script>
     <script type="text/javascript" src="js/vue/vue.js"></script>
     <script type="text/javascript" src="js/bootstrap/popper.min.js"></script>
     <script type="text/javascript" src="js/jquery/jquery-3.2.0.min.js"></script>
@@ -28,17 +23,22 @@
     <nav class="navbar navbar-light bg-light">
         <span i18n="nav-title" class="navbar-brand mb-0 h1">NT Weapon Grind Simulator</span>
         <ul class="nav justify-content-end">
-            <li class="nav-item">
-                <a i18n="nav-load" class="nav-link" href="#" id="nav-load"> Load </a>
-            </li>
-            <li class="nav-item">
-                <a i18n="nav-save" class="nav-link" href="#" id="nav-save"> Save </a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Data
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a i18n="nav-load" class="nav-link" href="#" id="nav-load"> Load </a>
+                    <a i18n="nav-save" class="nav-link" href="#" id="nav-save"> Save </a>
+                    <div class="dropdown-divider"></div>
+                    <a i18n="nav-url" class="nav-link" href="#" id="nav-url"> Share </a>
+                </div>
             </li>
             <li class="nav-item">
                 <a i18n="nav-settings" class="nav-link" data-toggle="modal" data-target="#settingsModal" href="#"> Settings </a>
             </li>
             <li class="nav-item">
-                <a i18n="nav-help" class="nav-link" data-toggle="modal" data-target="#helpModal" href="#"> Help </a>
+                <a i18n="nav-help" class="nav-link" data-toggle="modal" id="nav-help" href="#"> Help </a>
             </li>
             <li class="nav-item">
                 <a i18n="nav-about" class="nav-link" data-toggle="modal" data-target="#aboutModal" href="#"> About </a>
@@ -108,30 +108,34 @@
             <!--<span :style="">Lv.30</span>-->
             <!--<span :style="">Lv.35</span>-->
             <!--</ul>-->
-            <ul id="queue-tool-indicator" :style="{display: material.data.sameWeaponNotMatch.happened?'inherit':'none'}">
+            <ul class="queue-tool-indicator" :style="{display: material.data.sameWeaponNotMatch.happened?'inherit':'none'}">
                 <span class="oi oi-warning" style="color: darkorange" ></span>
                 <p i18n="queue-same-not-match">A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.</p>
+            </ul>
+            <ul class="queue-tool-indicator" :style="{display: settings.extraBonus>0?'inherit':'none'}">
+                <span class="oi oi-circle-check" style="color: green" ></span>
+                <p i18n="queue-extra-enable">Extra Bonus has set to on.</p>
             </ul>
             <ul class="queue-tool-set">
                 <div>
                     <span class="oi oi-trash" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-delete" @click="del"></span>
                     <span class="oi oi-clipboard" :style="{display: (selectedqueue.data.length!=''?'inline':'none')}" id="queue-tool-duplicate" @click="duplicate"></span>
-                    <span class="oi oi-beaker" :style="{display: ((selectedqueue.group!==null&&selectedqueue.index===null)?'inline':'none')}" id="queue-tool-bigsuccess" @click="toggleBS"></span>
+                    <span class="oi oi-beaker" :style="{display: ((selectedqueue.group!==null&&selectedqueue.index===null)?'inline':'none')}" id="queue-tool-gsuccess" @click="toggleBS"></span>
                     <span class="oi oi-pencil" :style="{display: (selectedqueue.index!==null?'inline':'none')}" id="queue-tool-edit" @click="edit"></span>
                     <span class="oi oi-trash" style="color: red" :style="{display: (selectedqueue.data.length!=''?'none':'inline')}" id="queue-tool-deleteAll" @click="deleteAll"></span>
                     <span class="oi oi-plus" id="queue-tool-add" data-toggle="modal" data-target="#editModal"></span>
                 </div>
             </ul>
             <div class="panel-queue" id="panel-material-list">
-                <draggable :list="groups" :options="{animation: 150, group: {name:'dup', pull:'clone'}}" @end="dragFinish">
+                <draggable :list="groups" :options="{animation: 150, scroll: true}" @end="dragFinish">
                     <div class="container-fluid container-queue" :class="{selected: selectedqueue.data == items}" v-for="items,group in groups" @click="selected(items,group,null)">
-                        <span class="oi oi-beaker" id="indicate-bigsuccess" :style="{display: items.bigSuccess==true?'inline':'none'}"></span>
+                        <span class="oi oi-beaker" id="indicate-gsuccess" :style="{display: items.gSuccess==true?'inline':'none'}"></span>
                         <div id="indicate-overflowed" :style="{display: material.checkPos(group)[0]==true?'inline':'none'}">
                             <span class="oi oi-warning"></span>
                             <p i18n="queue-overflowed">過剰EXP: </p>
                             <p><strong>{{material.checkPos(group)[1]}}</strong></p>
                         </div>
-                        <draggable :list="items.data" @end="dragFinish" :options="options" :move="checkLength">
+                        <draggable :list="items.data" @start="dragStart" @end="dragFinish" :options="{animation: 150, group: 'material',scroll: true}" :move="checkLength">
                             <div class="img-wrapper-small" :class="{selected: selectedqueue.data == item}" @click.stop="selected(item,group,index)" v-for="item,index in items.data">
                                 <div class="img-weapon-thumb-small">
                                     <span class="oi oi-media-record weapon-thumb-rappy" :style="{display: (item.withEmpr||item.withPoli)?'inherit':'none'}"></span>
@@ -143,7 +147,8 @@
                     </div>
                 </draggable>
                 <div id="add-material-space">
-                    <draggable :list="draglist" :options="{group: 'material'}"></draggable>
+                    <p i18n="queue-new-group" class="hint-text">Drag here to create a new group.</p>
+                    <draggable :list="draglist" :options="{group: 'material', scroll: true}"></draggable>
                 </div>
             </div>
         </div>
@@ -295,16 +300,16 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div class="modal-wrapper-material-extra">
+                        <div id="modal-footer-exp" class="modal-wrapper-material-extra">
                             <div class="element-edit input-group">
                                 <span i18n="modal-materialExp" class="input-group-addon">EXP</span>
                                 <input class="form-control" v-model="expAsMaterial()" disabled>
                             </div>
                         </div>
-                        <div>
+                        <!--<div id="modal-footer-btn">-->
                             <button i18n="modal-savebtn" type="button" class="btn btn-primary" id="btn-edit-save">Save changes</button>
                             <button i18n="modal-cancelbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -330,11 +335,17 @@
                                 <input type="radio" name="group-same" value="jp"> jp
                             </label>
                         </div>
+                        <div id="modal-extraBonus" class="element-edit input-group">
+                            <span i18n="modal-extrabonus" class="input-group-addon">Extra EXP Bonus</span>
+                            <input type="number" style="text-align: right" class="form-control" id="modal-input-extrabonus" v-model="extraBonus">
+                            <span class="input-group-addon">%</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="wrapper-mask"></div>
 </body>
 </html>

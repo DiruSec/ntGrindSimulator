@@ -1,11 +1,12 @@
 ﻿{
     "nav-title": "PSO2 新世武器強化シミュレータ",
+    "nav-url": "Share",
     "nav-save": "Save",
     "nav-settings": "Settings",
     "nav-help": "Help",
     "nav-about": "About",
     "title-base": "Base Weapon",
-    "base-editbtn": "本体設定",
+    "base-editbtn": "ベース設定",
     "base-addbtn": "リストに追加",
     "base-baseexp": "基本EXP:",
     "base-level": "強化値",
@@ -18,6 +19,8 @@
     "queue-overflowed": "過剰EXP: ",
     "queue-same-not-match": "ある素材が「同名武器」に設定されていますが、ベース武器とのレア度が合わない。",
     "queue-addbtn": "追加",
+    "queue-new-group": "ここにドラッグで新しい素材グループをつくります",
+    "queue-extra-enable": "EXPボーナスが設定されています。",
     "title-cost": "Cost",
     "cost-meseta": "消耗メセタ:",
     "cost-grinder": "グラインダー",
@@ -43,5 +46,6 @@
     "modal-materialExp": "素材時EXP",
     "modal-savebtn": "OK",
     "modal-cancelbtn": "Close",
-    "title-modal-settings": "設定"
+    "title-modal-settings": "設定",
+    "modal-extrabonus": "EXPボーナス（報酬期間など）"
 }

@@ -1,5 +1,6 @@
 {
     "nav-title": "PSO2 新世武器强化模拟器",
+    "nav-url": "Share",
     "nav-save": "Save",
     "nav-settings": "Settings",
     "nav-help": "Help",
@@ -17,7 +18,9 @@
     "queue-grindcount": "强化次数:",
     "queue-overflowed": "溢出EXP: ",
     "queue-same-not-match": "某武器设置为了“同名武器”，但其和本体武器的稀有度不符。",
+    "queue-extra-enable": "额外经验倍率已启用。",
     "queue-addbtn": "追加",
+    "queue-new-group": "拖到这里以创建新的素材组",
     "title-cost": "Cost",
     "cost-meseta": "手续费:",
     "cost-grinder": "地雷",
@@ -43,5 +46,6 @@
     "modal-materialExp": "素材EXP",
     "modal-savebtn": "OK",
     "modal-cancelbtn": "Close",
-    "title-modal-settings": "设定"
+    "title-modal-settings": "设定",
+    "modal-extrabonus": "额外EXP倍率"
 }

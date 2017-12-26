@@ -5,7 +5,6 @@ html{
 body{
     font-family: Meiryo;
     /*font-family: "MS PGothic", "Osaka";*/
-    user-select: none;
     min-width: 200px;
 }
 
@@ -28,6 +27,10 @@ hr{
 
 .area-content{
     margin: .5rem 0 2rem 0;
+}
+
+#nav-help{
+    color: red
 }
 
 /* 武器本体部分 */
@@ -98,6 +101,7 @@ hr{
 /* 共通部分：武器图标 */
 .img-wrapper-small{
     display: inline-block;
+    vertical-align: top;
     /*background: #0069d9;*/
     /*overflow: hidden;*/
     margin-right: 0.5em;
@@ -106,20 +110,20 @@ hr{
 
 .img-weapon-thumb-small{
     background: #0069d9 url(../img/icon.png);
-    background-size: 60px;
+    background-size: 50px;
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
 }
 
 .img-wrapper-small .weapon-thumb-name{
     margin: 0;
     text-align: center;
     font-size: 10px;
-    width: 60px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    width: 50px;
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    /*overflow: hidden;*/
 }
 
 .weapon-thumb-rappy{
@@ -138,6 +142,7 @@ hr{
     left: 0;
     bottom: 0;
     position: absolute;
+    letter-spacing: -.1em;
 }
 
 /* 强化素材队列部分 */
@@ -184,16 +189,16 @@ hr{
     border-radius: .5rem;
 }
 
-#queue-tool-indicator{
+.queue-tool-indicator{
     display: inline-block;
     font-size: 12px;
 }
 
-#queue-tool-indicator > *{
+.queue-tool-indicator > *{
     display: inline-block;
 }
 
-#queue-tool-indicator > p{
+.queue-tool-indicator > p{
     margin: 0 1rem 0 0;
 }
 
@@ -202,7 +207,7 @@ hr{
 }
 
 .container-queue{
-    margin-right: 1rem;
+    /*margin-right: 1rem;*/
     border-radius: 5px;
     display: inline-flex;
     width: auto;
@@ -213,20 +218,20 @@ hr{
 }
 
 .container-queue:hover{
-    background: #E8F3FFCC;
+    background: #EDF5FF;
 }
 
 .container-queue.selected{
-    background: #c3e2ffcc;
+    background: #D8ECFF;
 }
 
 .container-queue .img-wrapper-small.selected{
-    border: 3px solid #9ED0FFCC;
+    border: 3px solid #ADD7FF;
     border-radius: 3px;
-    background: #9ED0FF;
+    background: #ADD7FF;
 }
 
-#indicate-bigsuccess{
+#indicate-gsuccess{
      color: green;
      position: absolute;
      top: -.5rem;
@@ -254,10 +259,11 @@ hr{
 
 .panel-queue{
     position: relative;
+    background: #FCFCFC;
 }
 
 #add-material-space{
-    width: 30%;
+    width: 50%;
     background: #ffffffe0;
     border-radius: 5px;
     display: none;
@@ -267,24 +273,22 @@ hr{
     height: 5rem;
     border: 1px solid #BFBFBF;
 }
-.dup-space{
-    width: 30%;
-    background: #ffffffe0;
-    border-radius: 5px;
-    display: none;
-    position: absolute;
-    left: 5%;
-    bottom: -5rem;
-    height: 5rem;
-    border: 1px solid #BFBFBF;
+#add-material-space p.hint-text{
+    font-size: .8rem;
+    color: #6c757d;
 }
-#add-material-space > *, .dup-space > *{
-    top: 1%;
-    left: 1%;
-    right: 1%;
-    bottom: 1%;
-    position: absolute;
-    text-align: center;
+#add-material-space > *{
+     top: 1%;
+     left: 1%;
+     right: 1%;
+     bottom: 1%;
+     position: absolute;
+     text-align: center;
+}
+
+/* Safari 对策 */
+#queue-tool-add, #material-tool-add {
+    cursor: pointer;
 }
 
 /* 素材列表部分 */
@@ -331,7 +335,7 @@ hr{
 }
 
 .container-list .img-wrapper-small.selected,.container-list .img-wrapper-small.selected:hover{
-    border: 3px solid #9ED0FFCC;
+    border: 3px solid #9ED0FF;
     border-radius: 3px;
     background: #9ED0FF;
 }
@@ -385,18 +389,45 @@ hr{
     font-size: .8rem
 }
 
-#editModal .modal-footer>:not(:last-child) {
+#editModal #modal-footer-exp{
     margin-right: auto;
 }
 
 #editModal .modal-footer .input-group{
     margin:0;
+    margin-right: auto;
 }
 
 #editModal .modal-footer input{
     text-align: right;
 }
 
+/* 遮罩部分 */
+.wrapper-mask{
+    /*background-color: #00000090;*/
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 3;
+}
+
+/* 动画部分 */
+@keyframes fade-in {
+    from {opacity: 0.0;}
+    to {opacity: 0.95}
+}
+
+@keyframes fade-out {
+    from {opacity: 0.95;}
+    to {opacity: 0.0}
+}
+
+@keyframes blink {
+    from {opacity: 0.5;}
+    to {opacity: 0.95}
+}
 
 /* 小屏专用 */
 @media screen and (max-width:600px){
@@ -410,11 +441,17 @@ hr{
     }
 
     .container-queue{
-        margin: 0;
-        display: flex;
-        width: 95%;
+        margin: 0 1em;
+        display: inline-flex;
+        width: auto;
         align-items: center;
         justify-content: center;
+    }
+
+    .img-wrapper-small .weapon-thumb-name{
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     .queue-material-info{
@@ -423,7 +460,7 @@ hr{
     }
     .queue-material-info li{
         display: inline-block;
-        width: 75%
+        width: 50%
     }
     .queue-material-info span{
         margin-left: 0;

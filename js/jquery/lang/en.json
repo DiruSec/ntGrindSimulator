@@ -1,5 +1,6 @@
 ﻿{
     "nav-title": "NT Weapon Grind Simulator",
+    "nav-url": "Share",
     "nav-save": "Save",
     "nav-settings": "Settings",
     "nav-help": "Help",
@@ -17,7 +18,9 @@
     "queue-grindcount": "Grind Count: ",
     "queue-overflowed": "O.F EXP: ",
     "queue-same-not-match": "A material has been set to 'Same Weapon', but its rarity doesn't match with base weapon.",
+    "queue-extra-enable": "Extra Bonus has set to on.",
     "queue-addbtn": "Add Material",
+    "queue-new-group": "Drag here to create a new material group.",
     "title-cost": "Cost",
     "cost-meseta": "Meseta Cost:",
     "cost-grinder": "Grinder Cost:",
@@ -43,5 +46,6 @@
     "modal-materialExp": "EXP",
     "modal-savebtn": "Save changes",
     "modal-cancelbtn": "Close",
-    "title-modal-settings": "Settings"
+    "title-modal-settings": "Settings",
+    "modal-extrabonus": "Extra EXP Bonus"
 }
