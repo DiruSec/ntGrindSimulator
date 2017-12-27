@@ -784,7 +784,7 @@ simulator.data = {
                         }
                         return ((thisObj.sameSet==1?thisObj.rule().sameCategory:0)+(thisObj.rarity===simulator.data.baseWeapon.rarity?thisObj.rule().sameRarity:0))
                     }}();
-                var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0);
+                var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0) + (thisObj.withNt?800:0);
                 if (this.materialQueue[group].gSuccess){
                     basicExp = Math.ceil(basicExp*1.5);
                     materialBonus = Math.ceil(materialBonus*1.5);
@@ -809,7 +809,6 @@ simulator.data = {
                 overflowed35 += baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[35];
                 expResult = this.baseWeapon.expTable()[35] - baseWeaponExp;
                 overflowed35group = group;
-                console.log("here?")
             } else {
                 expResult += sectionResult;
             }
@@ -990,7 +989,7 @@ simulator.data = {
             simulator.createLinkMessage("info", data.dataid)
         })
             .fail(function(data){
-            console.log("error",data)
+            simulator.createLinkMessage("danger", "Save failed.")
         });
     },
 
@@ -1169,6 +1168,14 @@ simulator.data = {
         rarity: "r13",
         grind: 9,
         baseExp: 1720
-    }
+    },
+        {
+            name: "NTブースト",
+            rarity: "r123",
+            grind: 0,
+            baseExp: 0,
+            withNt: true,
+            cost: 800000
+        },
 ]
 };

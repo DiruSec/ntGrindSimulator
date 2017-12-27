@@ -6,7 +6,6 @@ import cgi
 import hashlib
 import pymysql
 import configparser
-import cgitb; cgitb.enable()
 from random import Random
 
 resultJSON = {}
@@ -33,7 +32,6 @@ except:
 
 form = cgi.FieldStorage()
 readId = form.getvalue('data')
-print (readId)
 if len(readId) > 6:
     setJSON("error", "Invaild id.")
     sentJSON()
