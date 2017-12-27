@@ -992,11 +992,11 @@ simulator.data = {
                     }
                 }
                 catch(err){
-                    simulator.createLinkMessage("danger", "Save failed.")
+                    simulator.createMessage("danger", "Save failed. Err: "+err)
                 }
         })
-            .fail(function(data){
-            simulator.createLinkMessage("danger", "Save failed.")
+            .fail(function(){
+            simulator.createMessage("danger", "Save failed.")
         });
     },
 
