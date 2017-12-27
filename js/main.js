@@ -986,7 +986,14 @@ simulator.data = {
                 },
         })
             .done(function(data){
-            simulator.createLinkMessage("info", data.dataid)
+                try {
+                    if (data.status == 'success') {
+                        simulator.createLinkMessage("info", data.dataid)
+                    }
+                }
+                catch(err){
+                    simulator.createLinkMessage("danger", "Save failed.")
+                }
         })
             .fail(function(data){
             simulator.createLinkMessage("danger", "Save failed.")
