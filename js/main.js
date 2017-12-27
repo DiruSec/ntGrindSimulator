@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 }, false);
 var settings ={
-    currentLang: navigator.language===undefined?'en':navigator.language,
+    currentLang: navigator.language===undefined?'jp':navigator.language,
     extraBonus: 0
 };
 // 主要处理函数
