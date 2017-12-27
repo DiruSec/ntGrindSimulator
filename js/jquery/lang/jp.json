@@ -19,7 +19,7 @@
     "queue-overflowed": "過剰EXP: ",
     "queue-same-not-match": "ある素材が「同名武器」に設定されていますが、ベース武器とのレア度が合わない。",
     "queue-addbtn": "追加",
-    "queue-new-group": "ここにドラッグで新しい素材グループをつくります",
+    "queue-new-group": "ここにドラッグすると新しい素材グループがつくります",
     "queue-extra-enable": "EXPボーナスが設定されています。",
     "title-cost": "Cost",
     "cost-meseta": "消耗メセタ:",
