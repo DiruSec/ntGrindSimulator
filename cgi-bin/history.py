@@ -12,7 +12,7 @@ except:
 try:
     file = open(dirname(dirname(abspath(__file__))) + "/history/history_" + lang + ".md","r+b")
 except:
-    file = open(dirname(dirname(abspath(__file__))) + "../history/history_ja.md","r+b")
+    file = open(dirname(dirname(abspath(__file__))) + "/history/history_ja.md","r+b")
 
 data = file.read().decode("UTF-8")
 
