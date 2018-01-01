@@ -84,6 +84,8 @@ hr{
 }
 
 .panel-weapon .base-wrapper-btn{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     position: absolute;
     bottom: 0;
@@ -202,15 +204,22 @@ hr{
 }
 
 .queue-tool-set div span:hover{
+    -webkit-box-shadow: 2px 2px 2px #BFBFBF;
     box-shadow: 2px 2px 2px #BFBFBF;
 }
 
 .container-queue{
     /*margin-right: 1rem;*/
     border-radius: 5px;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
     display: inline-flex;
     width: auto;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     padding: .5rem .5rem .5rem 1rem;
     position: relative;
@@ -231,10 +240,10 @@ hr{
 }
 
 #indicate-gsuccess{
-     color: green;
-     position: absolute;
-     top: -.5rem;
-     left: -.5rem;
+    color: green;
+    position: absolute;
+    top: -.5rem;
+    left: -.5rem;
 }
 
 #indicate-overflowed{
@@ -277,12 +286,12 @@ hr{
     color: #6c757d;
 }
 #add-material-space > *{
-     top: 1%;
-     left: 1%;
-     right: 1%;
-     bottom: 1%;
-     position: absolute;
-     text-align: center;
+    top: 1%;
+    left: 1%;
+    right: 1%;
+    bottom: 1%;
+    position: absolute;
+    text-align: center;
 }
 
 /* Safari 对策 */
@@ -326,6 +335,7 @@ hr{
     border-radius: .5rem;
 }
 .material-tool-set div span:hover{
+    -webkit-box-shadow: 2px 2px 2px #BFBFBF;
     box-shadow: 2px 2px 2px #BFBFBF;
 }
 
@@ -363,6 +373,8 @@ hr{
 }
 
 .element-edit.btn-group{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 
@@ -413,14 +425,28 @@ hr{
 }
 
 /* 动画部分 */
+@-webkit-keyframes fade-in {
+    from {opacity: 0.0;}
+    to {opacity: 0.95}
+}
 @keyframes fade-in {
     from {opacity: 0.0;}
     to {opacity: 0.95}
 }
 
+@-webkit-keyframes fade-out {
+    from {opacity: 0.95;}
+    to {opacity: 0.0}
+}
+
 @keyframes fade-out {
     from {opacity: 0.95;}
     to {opacity: 0.0}
+}
+
+@-webkit-keyframes blink {
+    from {opacity: 0.5;}
+    to {opacity: 0.95}
 }
 
 @keyframes blink {
@@ -441,13 +467,20 @@ hr{
 
     .container-queue{
         margin: 0 1em;
+        display: -webkit-inline-box;
+        display: -ms-inline-flexbox;
         display: inline-flex;
         width: auto;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
         align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
         justify-content: center;
     }
 
     .img-wrapper-small .weapon-thumb-name{
+        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
