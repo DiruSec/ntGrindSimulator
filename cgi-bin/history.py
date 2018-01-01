@@ -1,18 +1,18 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import markdown
-import sys
+from os.path import dirname, abspath
 import cgi
 
 form = cgi.FieldStorage()
 try:
     lang = form.getvalue('lang')
 except:
-    lang = 'ja-JP'
+    lang = 'ja'
 try:
-    file = open(sys.path[0] + "/../history/history_" + lang + ".md","r+b")
+    file = open(dirname(dirname(abspath(__file__))) + "/history/history_" + lang + ".md","r+b")
 except:
-    file = open(sys.path[0] + "/../history/history_ja-JP.md","r+b")
+    file = open(dirname(dirname(abspath(__file__))) + "../history/history_ja.md","r+b")
 
 data = file.read().decode("UTF-8")
 
