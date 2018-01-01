@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fileSuffix: "",
         forever: true,
         callback: function() {
-            $("#link-history").attr("href", "/cgi-bin/history.py?lang=" + settings.currentLang)
+            $("#link-history").attr("href", "cgi-bin/history.py?lang=" + settings.currentLang)
         }
     });
 }, false);
@@ -526,7 +526,7 @@ var simulator = {
                 filePrefix: "",
                 filePath: "js/jquery/lang/",
                 callback: function(){
-                    $("#link-history").attr("href", "/cgi-bin/history.py?lang=" + settings.currentLang)
+                    $("#link-history").attr("href", "cgi-bin/history.py?lang=" + settings.currentLang)
                 }
             }
         )
