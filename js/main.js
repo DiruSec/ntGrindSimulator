@@ -619,7 +619,7 @@ var simulator = {
                 position: 'absolute',
                 top: $(object).position().top,
                 left: $(object).position().left,
-                'box-shadow': 'rgba(0,0,0,.6) 0 0 0 ' + (window.outerWidth+window.outerHeight) + 'px',
+                'box-shadow': 'rgba(0,0,0,.6) 0 0 0 ' + (document.body.clientHeight+document.body.clientWidth) + 'px',
                 'z-index': 2,
                 'overflow': 'hidden'
             }

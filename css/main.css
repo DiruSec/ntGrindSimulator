@@ -295,7 +295,7 @@ hr{
 }
 
 /* Safari 对策 */
-#queue-tool-add, #material-tool-add {
+#queue-tool-add, #material-tool-add ,.wrapper-mask{
     cursor: pointer;
 }
 
