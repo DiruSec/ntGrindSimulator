@@ -20,11 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
         fileSuffix: "",
         forever: true,
         callback: function() {
+            $("#link-history").attr("href", "/cgi-bin/history.py?lang=" + settings.currentLang)
         }
     });
 }, false);
 var settings ={
-    currentLang: navigator.language===undefined?'jp':navigator.language,
+    currentLang: navigator.language===undefined?'ja':navigator.language,
     extraBonus: 0
 };
 // 主要处理函数
@@ -523,7 +524,10 @@ var simulator = {
         $("[i18n]").i18n({
                 defaultLang: settings.currentLang,
                 filePrefix: "",
-                filePath: "js/jquery/lang/"
+                filePath: "js/jquery/lang/",
+                callback: function(){
+                    $("#link-history").attr("href", "/cgi-bin/history.py?lang=" + settings.currentLang)
+                }
             }
         )
     },
