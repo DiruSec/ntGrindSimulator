@@ -12,9 +12,9 @@ try:
 except:
     lang = 'ja'
 try:
-    file = open(dirname(dirname(abspath(__file__))) + "/history/history_" + lang + ".md","r+b")
+    file = open(dirname(dirname(abspath(__file__))) + "/history/history_" + lang + ".md","rb")
 except:
-    file = open(dirname(dirname(abspath(__file__))) + "/history/history_ja.md","r+b")
+    file = open(dirname(dirname(abspath(__file__))) + "/history/history_ja.md","rb")
 
 data = file.read().decode("UTF-8")
 
