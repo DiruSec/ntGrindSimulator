@@ -3,6 +3,8 @@
 import markdown
 from os.path import dirname, abspath
 import cgi
+import codecs, sys 
+sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
 
 form = cgi.FieldStorage()
 try:

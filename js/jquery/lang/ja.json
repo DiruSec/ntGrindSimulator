@@ -43,5 +43,6 @@
     "modal-materialExp": "素材時EXP",
     "modal-savebtn": "OK",
     "modal-cancelbtn": "Close",
-    "title-modal-settings": "設定"
+    "title-modal-settings": "設定",
+    "modal-extrabonus": "EXPボーナス（報酬期間など）"
 }
