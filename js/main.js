@@ -768,6 +768,7 @@ simulator.data = {
         // Vue 无限循环暂时对策
         var overflowed35 = 0;
         var overflowed35group = 0;
+        // 本体已解放计算
         for (index in this.baseWeapon.expTable()){
             index = parseInt(index);
             if (this.baseWeapon.baseExp < this.baseWeapon.expTable()[index]) { break }
@@ -802,6 +803,13 @@ simulator.data = {
                 }
                 //TODO: 大赦选项和计算
                 sectionResult += basicExp + materialBonus + grindBonus
+            }
+            // 自动进行潜在解放
+            for (index in lvLimit){
+                if ((expResult + sectionResult) < this.baseWeapon.expTable()[lvLimit[index]] &&
+                    (expResult + sectionResult) > this.baseWeapon.expTable()[lvLimit[index]-1]){
+                    lvLimit.shift()
+                }
             }
             if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[lvLimit[0]]){
                 sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1;
