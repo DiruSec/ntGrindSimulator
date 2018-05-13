@@ -20,6 +20,6 @@ data = file.read().decode("UTF-8")
 
 html = markdown.markdown(data)
 
-print ("Content-Type: text/html\n\n")
+print ("Content-Type: text/html; charset=utf-8\n\n")
 print ("<head><title>Update History</title></head>")
 print (html)
