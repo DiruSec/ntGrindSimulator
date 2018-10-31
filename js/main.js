@@ -774,56 +774,56 @@ simulator.data = {
             if (this.baseWeapon.baseExp < this.baseWeapon.expTable()[index]) { break }
             if (lvLimit.indexOf(index)!= -1 || lvLimit.indexOf(index+1)!= -1) { lvLimit.shift() }
         }
-        for(group in this.materialQueue) {
-            var sectionResult = 0;
-            var sectionOverflowed = 0;
-            for (index in this.materialQueue[group].data) {
-                var thisObj = this.materialQueue[group].data[index];
-                var basicExp = thisObj.rule().basicExp;
-                var materialBonus = function() {
-                    if(simulator.data.baseWeapon.rarity == thisObj.rarity && thisObj.sameSet == 2) {
-                        return thisObj.rule().sameWeapon
-                    } else {
-                        if (thisObj.sameSet == 2) {
-                            simulator.data.materialAttention.configure("sameWeaponNotMatch", true, null, null);
-                        }
-                        return ((thisObj.sameSet==1?thisObj.rule().sameCategory:0)+(thisObj.rarity===simulator.data.baseWeapon.rarity?thisObj.rule().sameRarity:0))
-                    }}();
-                var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0) + (thisObj.withNt?800:0);
-                if (this.materialQueue[group].gSuccess){
-                    basicExp = Math.ceil(basicExp*1.5);
-                    materialBonus = Math.ceil(materialBonus*1.5);
-                    grindBonus = Math.ceil(grindBonus*1.5)
-                }
-                if (settings.extraBonus>0){
-                    var extraBonus = 1+(settings.extraBonus/100);
-                    basicExp = Math.ceil(basicExp*extraBonus);
-                    materialBonus = Math.ceil(materialBonus*extraBonus);
-                    grindBonus = Math.ceil(grindBonus*extraBonus)
-                }
-                //TODO: 大赦选项和计算
-                sectionResult += basicExp + materialBonus + grindBonus
-            }
-            // 自动进行潜在解放
-            for (index in lvLimit){
-                if ((expResult + sectionResult) < this.baseWeapon.expTable()[lvLimit[index]] &&
-                    (expResult + sectionResult) > this.baseWeapon.expTable()[lvLimit[index]-1]){
-                    lvLimit.shift()
-                }
-            }
-            if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[lvLimit[0]]){
-                sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1;
-                expResult = this.baseWeapon.expTable()[lvLimit[0]] - baseWeaponExp -1;
-                this.materialAttention.configure([lvLimit[0]], true, sectionOverflowed, group);
-                lvLimit.shift();
-            } else if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[35]){
-                // TODO: 修改逻辑更优雅避免 Vue 无限循环
-                overflowed35 += baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[35];
-                expResult = this.baseWeapon.expTable()[35] - baseWeaponExp;
-                overflowed35group = group;
+for(group in this.materialQueue) {
+    var sectionResult = 0;
+    var sectionOverflowed = 0;
+    for (index in this.materialQueue[group].data) {
+        var thisObj = this.materialQueue[group].data[index];
+        var basicExp = thisObj.rule().basicExp;
+        var materialBonus = function() {
+            if(simulator.data.baseWeapon.rarity == thisObj.rarity && thisObj.sameSet == 2) {
+                return thisObj.rule().sameWeapon
             } else {
-                expResult += sectionResult;
-            }
+                if (thisObj.sameSet == 2) {
+                    simulator.data.materialAttention.configure("sameWeaponNotMatch", true, null, null);
+                }
+                return ((thisObj.sameSet==1?thisObj.rule().sameCategory:0)+(thisObj.rarity===simulator.data.baseWeapon.rarity?thisObj.rule().sameRarity:0))
+            }}();
+        var grindBonus = parseInt(thisObj.baseExp/2) + (thisObj.withEmpr?90:0) + (thisObj.withPoli?25:0) + (thisObj.withNt?800:0);
+        if (this.materialQueue[group].gSuccess){
+            basicExp = Math.ceil(basicExp*1.5);
+            materialBonus = Math.ceil(materialBonus*1.5);
+            grindBonus = Math.ceil(grindBonus*1.5)
+        }
+        if (settings.extraBonus>0){
+            var extraBonus = 1+(settings.extraBonus/100);
+            basicExp = Math.ceil(basicExp*extraBonus);
+            materialBonus = Math.ceil(materialBonus*extraBonus);
+            grindBonus = Math.ceil(grindBonus*extraBonus)
+        }
+        //TODO: 大赦选项和计算
+        sectionResult += basicExp + materialBonus + grindBonus
+    }
+    // 自动进行潜在解放
+    for (index in lvLimit){
+        if ((expResult + sectionResult) < this.baseWeapon.expTable()[lvLimit[index]] &&
+            (expResult + sectionResult) > this.baseWeapon.expTable()[lvLimit[index]-1]){
+            lvLimit.shift()
+        }
+    }
+    if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[lvLimit[0]]){
+        sectionOverflowed = baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[lvLimit[0]] + 1;
+        expResult = this.baseWeapon.expTable()[lvLimit[0]] - baseWeaponExp -1;
+        this.materialAttention.configure([lvLimit[0]], true, sectionOverflowed, group);
+        lvLimit.shift();
+    } else if (baseWeaponExp + expResult + sectionResult >= this.baseWeapon.expTable()[35]){
+        // TODO: 修改逻辑更优雅避免 Vue 无限循环
+        overflowed35 += baseWeaponExp + expResult + sectionResult - this.baseWeapon.expTable()[35];
+        expResult = this.baseWeapon.expTable()[35] - baseWeaponExp;
+        overflowed35group = group;
+    } else {
+        expResult += sectionResult;
+    }
         }
         if (overflowed35 > 0){
             this.materialAttention.configure([35], true, overflowed35, overflowed35group);
